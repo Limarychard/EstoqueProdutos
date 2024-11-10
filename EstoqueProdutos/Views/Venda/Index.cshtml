@@ -1,0 +1,92 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using System.Reflection
+@using EstoqueProdutos.Enums
+
+@model List<VendaModel>;
+
+@functions {
+    private string FormaDePagamentoDisplay(FormaDePagamentoEnum formaDePagamento)
+    {
+        var displayAttribute = formaDePagamento.GetType().GetField(formaDePagamento.ToString()).GetCustomAttribute<DisplayAttribute>();
+
+        return displayAttribute?.Name ?? formaDePagamento.ToString();
+    }
+}
+
+    @if (TempData["MensagemSucesso"] != null)
+    {
+        <div class="alert alert-success" role="alert">
+            @TempData["MensagemSucesso"]
+            <button type="button" class="btn-close float-end close-alert" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+    }
+    else if (TempData["MensagemErro"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @TempData["MensagemErro"]
+            <button type="button" class="btn-close float-end close-alert" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+    }
+
+<div class="container">
+
+    <div class="justify-content-between align-items-center mb-3">
+        <a asp-action="Criar" class="btn btn-primary">Nova venda</a>
+    </div>
+
+    <table id="vendasTable" class="table table-white table-bordered table-striped text-center">
+        <thead>
+            <tr class="table-primary">
+                <th scope="col"></th>
+                <th scope="col">Cliente</th>
+                <th scope="col">Produto</th>
+                <th scope="col">Qtd. Vendida</th>
+                <th scope="col">Valor</th>
+                <th scope="col">Forma de Pagamento</th>
+                <th scope="col">Parcelado</th>
+                <th scope="col">Qtd. Parcelas</th>
+                <th class="align-content-center text-center" scope="col">Data da Venda</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if(Model != null)
+            {
+                //int linha = 1;
+                @foreach (var venda in Model)
+                {
+                    <tr>
+                        <td class="align-content-center text-center">
+                            <div class="dropdown">
+                                <a class="btn btn-primary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a asp-controller="Venda" asp-action="Editar" asp-route-id="@venda.Id" class="dropdown-item">Editar</a></li>
+                                    <li><a role="button" asp-route-id="@venda.Id" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal-@venda.Id">Apagar</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                       <!-- <td class="align-content-center">
+                            
+                             <input class="form-check-input" type="checkbox" value="false"> 
+                        </td> -->
+                        <td class="align-content-center text-start">@venda.Cliente.Nome</td>
+                        <td class="align-content-center text-start">@venda.Produto.Nome</td>
+                        <td class="align-content-center text-start">@venda.QuantidadeProduto</td>
+                        <td class="align-content-center text-start">R$ @venda.Valor</td>
+                        <td class="align-content-center text-center">@FormaDePagamentoDisplay(venda.FormaDePagamento)</td>
+                        <td class="align-content-center text-center">
+                            <i class="@(venda.Parcelado ? "bi bi-hand-thumbs-up-fill text-success" : "bi bi-hand-thumbs-down-fill text-danger")"></i>
+                        </td>
+                        <td >@venda.QuantidadeDeParcela</td>
+                        <td class="align-content-center text-center">@venda.DtInc.ToString("dd/MM/yyyy")</td>
+                    </tr>
+
+                    //linha++;
+                    @Html.Partial("~/Views/Shared/Modal/ApagarVendaModal.cshtml", venda)
+                }
+            }
+        </tbody>
+    </table>
+
+</div>

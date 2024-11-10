@@ -1,0 +1,32 @@
+﻿@model List<ProdutoModel>;
+
+<div class="container">
+
+    <div class="justify-content-between align-items-center mb-3">
+        <a asp-action="Criar" class="btn btn-primary">Novo produto</a>
+    </div>
+    @if(Model != null)
+    {
+        <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+            @foreach (var produto in Model)
+            {
+                <div class="col">
+                    <div class="card border-2 rounded-lg h-100" style="width: 18rem;">
+                        <img src="@Url.Action("ObterImagem", "Produto", new { id = produto.Id })" class="card-img-top" alt="Imagem do Produto">
+                        <div class="card-body">
+                            <h3 class="card-title">@produto.Nome</h3>
+                            <p class="card-text">R$@produto.Valor</p>
+                            <p class="card-text">@produto.Descricao</p>
+                            <p class="card-text">Quantidade: @produto.Quantidade</p>
+                        </div>
+                        <div class="d-flex gap-2 p-2">
+                            <a asp-controller="Produto" asp-action="Editar" asp-route-id="@produto.Id"  class="btn btn-primary w-50">Editar</a>
+                            <a role="button" asp-route-id="@produto.Id" class="btn btn-danger w-50" data-bs-toggle="modal" data-bs-target="#exampleModal-@produto.Id">Apagar</a>
+                        </div>
+                    </div>
+                </div>
+                @Html.Partial("~/Views/Shared/Modal/ApagarProdutoModal.cshtml", produto)
+            }
+        </div>
+    }
+</div>
