@@ -39,6 +39,8 @@ namespace EstoqueProdutos.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    usuario.SetSenhaHash();
+
                     _usuarioRepositorio.Adicionar(usuario);
                     TempData["MensagemSucesso"] = "Usuário cadastrado com sucesso!";
                     return RedirectToAction("Index");
