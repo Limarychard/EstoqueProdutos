@@ -1,0 +1,70 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using System.Reflection
+@using EstoqueProdutos.Enums
+
+@model List<UsuarioModel>;
+
+    @if (TempData["MensagemSucesso"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["MensagemSucesso"]
+        <button type="button" class="btn-close float-end close-alert" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+}
+else if (TempData["MensagemErro"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["MensagemErro"]
+        <button type="button" class="btn-close float-end close-alert" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+}
+
+<div class="container">
+
+    <div class="justify-content-between align-items-center mb-3">
+        <a asp-controller="Usuario" asp-action="Criar" class="btn btn-primary">Novo usuário</a>
+    </div>
+
+    <table id="usuariosTable" class="table table-white table-bordered table-striped text-center">
+        <thead>
+            <tr class="table-primary">
+                <th scope="col"></th>
+                <th scope="col">Nome</th>
+                <th scope="col">Login</th>
+                <th scope="col">Email</th>
+                <th scope="col">Perfil</th>
+                <th scope="col">Data Cadastro</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                @foreach (var usuario in Model)
+                {
+                    <tr>
+                        <td class="align-content-center text-center">
+                            <div class="dropdown">
+                                <a class="btn btn-primary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a asp-controller="Usuario" asp-action="Editar" asp-route-id="@usuario.Id" class="dropdown-item">Editar</a></li>
+                                    <li><a role="button" asp-route-id="@usuario.Id" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal-@usuario.Id">Apagar</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                        <td class="align-content-center text-start">@usuario.Nome</td>
+                        <td class="align-content-center text-start">@usuario.Login</td>
+                        <td class="align-content-center text-start">@usuario.Email</td>
+                        <td class="align-content-center text-start">@(usuario.Perfil == EstoqueProdutos.Enums.PerfilEnum.Admin ? "Admin" : "Padrão" )</td>
+                        <td class="align-content-center text-center">@usuario.DtInc.ToString("dd/MM/yyyy")</td>
+                    </tr>
+
+                    //linha++;
+                    @Html.Partial("~/Views/Shared/Modal/ApagarUsuarioModal.cshtml", usuario)
+                }
+            }
+        </tbody>
+    </table>
+
+</div>

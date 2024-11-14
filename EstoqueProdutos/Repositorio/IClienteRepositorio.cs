@@ -5,6 +5,7 @@ namespace EstoqueProdutos.Repositorio
     public interface IClienteRepositorio
     {
         ClienteModel ListarPorId(int id);
+        List<ClienteModel> ListarPorUsuarioId(int usuarioId);
         List<ClienteModel> ListarTodos();
         ClienteModel Adicionar(ClienteModel cliente);
         ClienteModel Alterar(ClienteModel cliente);

@@ -23,6 +23,15 @@ namespace EstoqueProdutos.Repositorio
             return _bancoContext.Vendas.Include(v => v.Cliente).Include(v => v.Produto).ToList();
         }
 
+        public List<VendaModel> ListarPorUsuarioId(int usuarioId)
+        {
+            return _bancoContext.Vendas
+                .Include(v => v.Cliente)
+                .Include(v => v.Produto)
+                .Where(v => v.UsuarioId == usuarioId)
+                .ToList();
+        }
+
         public VendaModel Adicionar(VendaModel venda)
         {
             _bancoContext.Vendas.Add(venda);

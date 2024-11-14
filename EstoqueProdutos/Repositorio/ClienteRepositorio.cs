@@ -1,5 +1,6 @@
 ﻿using EstoqueProdutos.Data;
 using EstoqueProdutos.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace EstoqueProdutos.Repositorio
 {
@@ -14,6 +15,13 @@ namespace EstoqueProdutos.Repositorio
         public ClienteModel ListarPorId(int id)
         {
             return _bancoContext.Clientes.FirstOrDefault(x => x.Id == id);
+        }
+
+        public List<ClienteModel> ListarPorUsuarioId(int usuarioId)
+        {
+            return _bancoContext.Clientes
+                .Where(v => v.UsuarioId == usuarioId)
+                .ToList();
         }
 
         public List<ClienteModel> ListarTodos()

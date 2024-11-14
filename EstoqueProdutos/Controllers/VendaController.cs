@@ -1,5 +1,7 @@
 ﻿using EstoqueProdutos.Data;
 using EstoqueProdutos.Enums;
+using EstoqueProdutos.Filters;
+using EstoqueProdutos.Helper;
 using EstoqueProdutos.Models;
 using EstoqueProdutos.Repositorio;
 using Microsoft.AspNetCore.Mvc;
@@ -10,22 +12,30 @@ using System.Reflection;
 
 namespace EstoqueProdutos.Controllers
 {
+    [PaginaParaUsuarioLogado]
     public class VendaController : Controller
     {
         readonly private IVendaRepositorio _vendaRepositorio;
         readonly private IClienteRepositorio _clienteRepositorio;
         readonly private IProdutoRepositorio _produtoRepositorio;
+        readonly private IUsuarioRepositorio _usuarioRepositorio;
+        readonly private ISessao _sessao;
 
 
         public VendaController(
             IVendaRepositorio vendaRepositorio, 
             IClienteRepositorio clienteRepositorio,
-            IProdutoRepositorio produtoRepositorio
+            IProdutoRepositorio produtoRepositorio,
+            IUsuarioRepositorio usuarioRepositorio,
+            ISessao sessao
             )
         {
             _vendaRepositorio = vendaRepositorio;
             _clienteRepositorio = clienteRepositorio;
             _produtoRepositorio = produtoRepositorio;
+            _usuarioRepositorio = usuarioRepositorio;
+            _sessao = sessao;
+
         }
 
         private List<SelectListItem> ObterFormasDePagamento()
@@ -51,15 +61,28 @@ namespace EstoqueProdutos.Controllers
 
         public IActionResult Index()
         {
-            var Vendas = _vendaRepositorio.ListarTodos();
+            var usuarioLogado = _sessao.BuscarSessaoDoUsuario();
+
+            List<VendaModel> Vendas;
+            if (usuarioLogado.Perfil == PerfilEnum.Admin)
+            {
+                Vendas = _vendaRepositorio.ListarTodos();
+            }
+            else
+            {
+                Vendas = _vendaRepositorio.ListarPorUsuarioId(usuarioLogado.Id);
+            }
+
             return View(Vendas);
         }
 
         [HttpGet]
         public IActionResult Criar()
         {
-            ViewBag.Clientes = new SelectList(_clienteRepositorio.ListarTodos(), "Id", "Nome");
-            ViewBag.Produtos = new SelectList(_produtoRepositorio.ListarTodos(), "Id", "Nome");
+            var usuarioLogado = _sessao.BuscarSessaoDoUsuario();
+
+            ViewBag.Clientes = new SelectList(_clienteRepositorio.ListarPorUsuarioId(usuarioLogado.Id), "Id", "Nome");
+            ViewBag.Produtos = new SelectList(_produtoRepositorio.ListarPorUsuarioId(usuarioLogado.Id), "Id", "Nome");
             ViewBag.FormasDePagamento = ObterFormasDePagamento();
             return View();
         }
@@ -69,8 +92,10 @@ namespace EstoqueProdutos.Controllers
         {
             try
             {
-                ViewBag.Clientes = new SelectList(_clienteRepositorio.ListarTodos(), "Id", "Nome");
-                ViewBag.Produtos = new SelectList(_produtoRepositorio.ListarTodos(), "Id", "Nome");
+                var usuarioLogado = _sessao.BuscarSessaoDoUsuario();
+
+                ViewBag.Clientes = new SelectList(_clienteRepositorio.ListarPorUsuarioId(usuarioLogado.Id), "Id", "Nome");
+                ViewBag.Produtos = new SelectList(_produtoRepositorio.ListarPorUsuarioId(usuarioLogado.Id), "Id", "Nome");
                 ViewBag.FormasDePagamento = ObterFormasDePagamento();
 
                 venda.Cliente = _clienteRepositorio.ListarPorId(venda.ClienteId);
@@ -78,6 +103,7 @@ namespace EstoqueProdutos.Controllers
 
                 ModelState.Remove("Cliente");
                 ModelState.Remove("Produto");
+                ModelState.Remove("Usuario");
 
                 if (ModelState.IsValid)
                 {
@@ -85,21 +111,20 @@ namespace EstoqueProdutos.Controllers
                     {
                         venda.QuantidadeDeParcela = 0;
                     }
-                    _vendaRepositorio.Adicionar(venda);
 
+                    venda.UsuarioId = usuarioLogado.Id;
 
                     var produto = _produtoRepositorio.ListarPorId(venda.ProdutoId);
 
-                    if(produto != null && produto.Quantidade >= venda.QuantidadeProduto)
-                    {
-                        produto.Quantidade -= venda.QuantidadeProduto;
-                        _produtoRepositorio.Alterar(produto);
-                    }
-                    else
+                    if(!(produto != null && produto.Quantidade >= venda.QuantidadeProduto))
                     {
                         TempData["MensagemErro"] = "Estoque insuficiente para a venda.";
                         return RedirectToAction("Index");
                     }
+
+                    produto.Quantidade -= venda.QuantidadeProduto;
+                    _produtoRepositorio.Alterar(produto);
+                    _vendaRepositorio.Adicionar(venda);
 
                     TempData["MensagemSucesso"] = "Parabéns, você fez uma nova venda!";
                     return RedirectToAction("Index");
@@ -115,9 +140,11 @@ namespace EstoqueProdutos.Controllers
         [HttpGet]
         public IActionResult Editar(int id)
         {
+            var usuarioLogado = _sessao.BuscarSessaoDoUsuario();
+
             VendaModel venda = _vendaRepositorio.ListarPorId(id);
-            ViewBag.Clientes = new SelectList(_clienteRepositorio.ListarTodos(), "Id", "Nome");
-            ViewBag.Produtos = new SelectList(_produtoRepositorio.ListarTodos(), "Id", "Nome");
+            ViewBag.Clientes = new SelectList(_clienteRepositorio.ListarPorUsuarioId(usuarioLogado.Id), "Id", "Nome");
+            ViewBag.Produtos = new SelectList(_produtoRepositorio.ListarPorUsuarioId(usuarioLogado.Id), "Id", "Nome");
             ViewBag.FormasDePagamento = ObterFormasDePagamento();
             return View(venda);
         }
@@ -127,15 +154,30 @@ namespace EstoqueProdutos.Controllers
         {
             try
             {
-                ViewBag.Clientes = new SelectList(_clienteRepositorio.ListarTodos(), "Id", "Nome");
-                ViewBag.Produtos = new SelectList(_produtoRepositorio.ListarTodos(), "Id", "Nome");
+                var usuarioLogado = _sessao.BuscarSessaoDoUsuario();
+
+                ViewBag.Clientes = new SelectList(_clienteRepositorio.ListarPorUsuarioId(usuarioLogado.Id), "Id", "Nome");
+                ViewBag.Produtos = new SelectList(_produtoRepositorio.ListarPorUsuarioId(usuarioLogado.Id), "Id", "Nome");
                 ViewBag.FormasDePagamento = ObterFormasDePagamento();
 
                 ModelState.Remove("Cliente");
                 ModelState.Remove("Produto");
+                ModelState.Remove("Usuario");
 
                 if (ModelState.IsValid)
                 {
+                    venda.UsuarioId = usuarioLogado.Id;
+
+                    var produto = _produtoRepositorio.ListarPorId(venda.ProdutoId);
+
+                    if (!(produto != null && produto.Quantidade >= venda.QuantidadeProduto))
+                    {
+                        TempData["MensagemErro"] = "Estoque insuficiente para a venda.";
+                        return RedirectToAction("Index");
+                    }
+
+                    produto.Quantidade -= venda.QuantidadeProduto;
+                    _produtoRepositorio.Alterar(produto);
                     _vendaRepositorio.Alterar(venda);
                     TempData["MensagemSucesso"] = "Venda editada com sucesso!";
                     return RedirectToAction("Index");

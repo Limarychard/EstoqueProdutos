@@ -8,5 +8,8 @@
         public string Descricao { get; set; }
         public byte[] Foto { get; set; }
         public int Quantidade { get; set; }
+
+        public int UsuarioId { get; set; }
+        public UsuarioModel Usuario { get; set; }
     }
 }

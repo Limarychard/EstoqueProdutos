@@ -6,6 +6,7 @@ namespace EstoqueProdutos.Repositorio
     {
         VendaModel ListarPorId(int id);
         List<VendaModel> ListarTodos();
+        List<VendaModel> ListarPorUsuarioId(int usuarioId);
         VendaModel Adicionar(VendaModel venda);
         VendaModel Alterar(VendaModel venda);
         VendaModel Deletar(VendaModel venda);

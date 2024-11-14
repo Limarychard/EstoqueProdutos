@@ -13,5 +13,6 @@ namespace EstoqueProdutos.Data
         public DbSet<VendaModel> Vendas { get; set; }
         public DbSet<ClienteModel> Clientes { get; set; }
         public DbSet<ProdutoModel> Produtos { get; set; }
+        public DbSet<UsuarioModel> Usuarios { get; set; }
     }
 }

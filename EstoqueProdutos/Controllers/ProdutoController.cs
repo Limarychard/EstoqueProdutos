@@ -1,5 +1,7 @@
 ﻿using EstoqueProdutos.Data;
 using EstoqueProdutos.Enums;
+using EstoqueProdutos.Filters;
+using EstoqueProdutos.Helper;
 using EstoqueProdutos.Models;
 using EstoqueProdutos.Repositorio;
 using Microsoft.AspNetCore.Mvc;
@@ -9,18 +11,36 @@ using System.Reflection;
 
 namespace EstoqueProdutos.Controllers
 {
+    [PaginaParaUsuarioLogado]
     public class ProdutoController : Controller
     {
         readonly private IProdutoRepositorio _produtoRepositorio;
+        readonly private ISessao _sessao;
 
-        public ProdutoController(IProdutoRepositorio produtoRepositorio)
+
+        public ProdutoController(
+            IProdutoRepositorio produtoRepositorio,
+            ISessao sessao
+            )
         {
             _produtoRepositorio = produtoRepositorio;
+            _sessao = sessao;
         }
 
         public IActionResult Index()
         {
-            var Produtos = _produtoRepositorio.ListarTodos();
+            var usuarioLogado = _sessao.BuscarSessaoDoUsuario();
+
+            List<ProdutoModel> Produtos;
+            if (usuarioLogado.Perfil == PerfilEnum.Admin)
+            {
+                Produtos = _produtoRepositorio.ListarTodos();
+            }
+            else
+            {
+                Produtos = _produtoRepositorio.ListarPorUsuarioId(usuarioLogado.Id);
+            }
+
             return View(Produtos);
         }
 
@@ -56,9 +76,13 @@ namespace EstoqueProdutos.Controllers
                 }
 
                 ModelState.Remove("Foto");
+                ModelState.Remove("Usuario");
 
                 if (ModelState.IsValid)
                 {
+                    var usuarioLogado = _sessao.BuscarSessaoDoUsuario();
+                    produto.UsuarioId = usuarioLogado.Id;
+
                     _produtoRepositorio.Adicionar(produto);
                     TempData["MensagemSucesso"] = "Cliente cadastrado com sucesso!";
                     return RedirectToAction("Index");
@@ -102,9 +126,13 @@ namespace EstoqueProdutos.Controllers
                 }
 
                 ModelState.Remove("Foto");
+                ModelState.Remove("Usuario");
 
                 if (ModelState.IsValid)
                 {
+                    var usuarioLogado = _sessao.BuscarSessaoDoUsuario();
+                    produto.UsuarioId = usuarioLogado.Id;
+
                     _produtoRepositorio.Alterar(produto);
                     TempData["MensagemSucesso"] = "Produto editado com sucesso!";
                     return RedirectToAction("Index");

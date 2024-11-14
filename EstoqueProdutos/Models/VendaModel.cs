@@ -29,5 +29,8 @@ namespace EstoqueProdutos.Models
         public DateTime DtInc { get; set; } = DateTime.Now;
         public DateTime DtAlt { get; set;  } = DateTime.Now;
 
+
+        public int UsuarioId { get; set; }
+        public UsuarioModel Usuario { get; set; }
     }
 }

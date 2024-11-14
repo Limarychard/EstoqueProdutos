@@ -17,7 +17,13 @@ function atualizarParcelas() {
 }
 
 $(document).ready(function () {
-    $('#vendasTable').DataTable({
+    getDatatable('#usuariosTable');
+    getDatatable('#clientesTable');
+    getDatatable('#vendasTable');
+});
+
+function getDatatable(id) {
+    $(id).DataTable({
         "ordering": true,
         "paging": true,
         "searching": true,
@@ -44,8 +50,8 @@ $(document).ready(function () {
                 "sSortDescending": ": Ordenar colunas de forma descendente"
             }
         }
-    });
-});
+    })
+}
 
 $(document).ready(function () {
     $('#inputValor').inputmask('decimal', {

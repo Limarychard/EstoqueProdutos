@@ -5,6 +5,7 @@ namespace EstoqueProdutos.Repositorio
     public interface IProdutoRepositorio
     {
         ProdutoModel ListarPorId(int id);
+        List<ProdutoModel> ListarPorUsuarioId(int usuarioId);
         List<ProdutoModel> ListarTodos();
         ProdutoModel ObterPorId(int id);
         ProdutoModel Adicionar(ProdutoModel produto);

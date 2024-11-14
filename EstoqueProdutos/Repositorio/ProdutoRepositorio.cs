@@ -18,6 +18,14 @@ namespace EstoqueProdutos.Repositorio
             return _bancoContext.Produtos.FirstOrDefault(x => x.Id == id);
         }
 
+        public List<ProdutoModel> ListarPorUsuarioId(int usuarioId)
+        {
+            return _bancoContext.Produtos
+                .Include(v => v.Usuario)
+                .Where(v => v.UsuarioId == usuarioId)
+                .ToList();
+        }
+
         public List<ProdutoModel> ListarTodos()
         {
             return _bancoContext.Produtos.ToList();

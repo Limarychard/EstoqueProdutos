@@ -1,5 +1,7 @@
 ﻿using EstoqueProdutos.Data;
 using EstoqueProdutos.Enums;
+using EstoqueProdutos.Filters;
+using EstoqueProdutos.Helper;
 using EstoqueProdutos.Models;
 using EstoqueProdutos.Repositorio;
 using Microsoft.AspNetCore.Mvc;
@@ -9,18 +11,35 @@ using System.Reflection;
 
 namespace EstoqueProdutos.Controllers
 {
+    [PaginaParaUsuarioLogado]
     public class ClienteController : Controller
     {
         readonly private IClienteRepositorio _clienteRepositorio;
+        readonly private ISessao _sessao;
 
-        public ClienteController(IClienteRepositorio clienteRepositorio)
+        public ClienteController(
+            IClienteRepositorio clienteRepositorio,
+            ISessao sessao
+            )
         {
             _clienteRepositorio = clienteRepositorio;
+            _sessao = sessao;
         }
 
         public IActionResult Index()
         {
-            var Clientes = _clienteRepositorio.ListarTodos();
+            var usuarioLogado = _sessao.BuscarSessaoDoUsuario();
+
+            List<ClienteModel> Clientes;
+            if (usuarioLogado.Perfil == PerfilEnum.Admin)
+            {
+                Clientes = _clienteRepositorio.ListarTodos();
+            }
+            else
+            {
+                Clientes = _clienteRepositorio.ListarPorUsuarioId(usuarioLogado.Id);
+            }
+
             return View(Clientes);
         }
 
@@ -35,8 +54,14 @@ namespace EstoqueProdutos.Controllers
         {
             try
             {
+                ModelState.Remove("Usuario");
+
                 if (ModelState.IsValid)
                 {
+
+                    var usuarioLogado = _sessao.BuscarSessaoDoUsuario();
+                    cliente.UsuarioId = usuarioLogado.Id;
+
                     _clienteRepositorio.Adicionar(cliente);
                     TempData["MensagemSucesso"] = "Cliente cadastrado com sucesso!";
                     return RedirectToAction("Index");
@@ -62,8 +87,13 @@ namespace EstoqueProdutos.Controllers
         {
             try
             {
+                ModelState.Remove("Usuario");
+
                 if (ModelState.IsValid)
                 {
+                    var usuarioLogado = _sessao.BuscarSessaoDoUsuario();
+                    cliente.UsuarioId = usuarioLogado.Id;
+
                     _clienteRepositorio.Alterar(cliente);
                     TempData["MensagemSucesso"] = "Cliente editado com sucesso!";
                     return RedirectToAction("Index");

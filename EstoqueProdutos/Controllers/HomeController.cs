@@ -1,9 +1,11 @@
+using EstoqueProdutos.Filters;
 using EstoqueProdutos.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace EstoqueProdutos.Controllers
 {
+    [PaginaParaUsuarioLogado]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
