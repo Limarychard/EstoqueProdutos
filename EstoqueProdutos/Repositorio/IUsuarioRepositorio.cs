@@ -6,6 +6,7 @@ namespace EstoqueProdutos.Repositorio
     {
         UsuarioModel BuscarPorLogin(string login);
         UsuarioModel BuscarPorEmailELogin(string login, string email);
+        UsuarioModel ObterPorId(int id);
         UsuarioModel ListarPorId(int id);
         List<UsuarioModel> ListarTodos();
         UsuarioModel Adicionar(UsuarioModel usuario);

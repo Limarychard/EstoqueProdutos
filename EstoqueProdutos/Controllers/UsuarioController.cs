@@ -26,6 +26,17 @@ namespace EstoqueProdutos.Controllers
             return View(Clientes);
         }
 
+        public IActionResult ObterImagem(int id)
+        {
+            var usuario = _usuarioRepositorio.ObterPorId(id);
+            if (usuario != null && usuario.Logo != null)
+            {
+                return File(usuario.Logo, "image/jpeg");
+            }
+
+            return NotFound();
+        }
+
         [HttpGet]
         public IActionResult Criar()
         {
@@ -33,10 +44,21 @@ namespace EstoqueProdutos.Controllers
         }
 
         [HttpPost]
-        public IActionResult Criar(UsuarioModel usuario)
+        public IActionResult Criar(UsuarioModel usuario, IFormFile Logo)
         {
             try
             {
+                if (Logo != null && Logo.Length > 0)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        Logo.CopyTo(memoryStream);
+                        usuario.Logo = memoryStream.ToArray();
+                    }
+                }
+
+                ModelState.Remove("Logo");
+
                 if (ModelState.IsValid)
                 {
                     usuario.SetSenhaHash();
@@ -62,10 +84,29 @@ namespace EstoqueProdutos.Controllers
         }
 
         [HttpPost]
-        public IActionResult Editar(UsuarioSemSenhaModel usuarioSemSenha)
+        public IActionResult Editar(UsuarioSemSenhaModel usuarioSemSenha, IFormFile Logo)
         {
             try
             {
+                if (Logo != null && Logo.Length > 0)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        Logo.CopyTo(memoryStream);
+                        usuarioSemSenha.Logo = memoryStream.ToArray();
+                    }
+                }
+                else
+                {
+                    var usuarioExistente = _usuarioRepositorio.ObterPorId(usuarioSemSenha.Id);
+                    if (usuarioExistente != null)
+                    {
+                        usuarioSemSenha.Logo = usuarioExistente.Logo;
+                    }
+                }
+
+                ModelState.Remove("Logo");
+
                 UsuarioModel usuario = null;
 
                 if (ModelState.IsValid)
@@ -77,6 +118,7 @@ namespace EstoqueProdutos.Controllers
                         Login = usuarioSemSenha.Login,
                         Email = usuarioSemSenha.Email,
                         Perfil = usuarioSemSenha.Perfil,
+                        Logo = usuarioSemSenha.Logo
                     };
 
                     usuario = _usuarioRepositorio.Alterar(usuario);

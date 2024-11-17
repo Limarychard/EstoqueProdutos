@@ -19,5 +19,7 @@ namespace EstoqueProdutos.Models
 
         [Required(ErrorMessage = "Informe o perfil do usuário")]
         public PerfilEnum Perfil { get; set; }
+
+        public byte[]? Logo { get; set; }
     }
 }

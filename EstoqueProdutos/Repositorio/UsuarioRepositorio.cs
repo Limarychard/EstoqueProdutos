@@ -58,6 +58,7 @@ namespace EstoqueProdutos.Repositorio
             usuarioDB.Email = usuario.Email;
             usuarioDB.Login = usuario.Login;
             usuarioDB.Perfil = usuario.Perfil;
+            usuarioDB.Logo = usuario.Logo;
             usuarioDB.DtAlt = DateTime.Now;
 
             _bancoContext.Usuarios.Update(usuarioDB);

@@ -3,7 +3,7 @@
 <nav id="sidebar" class="border border-1">
     <div id="sidebar_content">
         <div id="user">
-            <img src="src/images/avatar.jpg" id="user_avatar" alt="Avatar">
+            <img src="@Url.Action("ObterImagem", "Imagem", new { id = Model.Id })" id="user_avatar" alt="Avatar">
 
             <p id="user_infos">
                 <span class="item-description">
@@ -62,18 +62,17 @@
             </li>
         </ul>
 
-
         <button id="open_btn">
             <i id="open_btn_icon" class="fa-solid fa-chevron-right"></i>
         </button>
     </div>
-
+         
     <div id="logout">
-        <button id="logout_btn">
+        <button id="logout_btn" onclick="window.location.href='@Url.Action("Sair", "Login")'">
             <i class="fa-solid fa-right-from-bracket"></i>
-            <a asp-area="" asp-controller="Login" asp-action="Sair" class="item-description text-decoration-none text-black">
+            <span class="item-description">
                 Logout
-            </a>
+            </span>
         </button>
     </div>
 </nav>

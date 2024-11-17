@@ -5,9 +5,12 @@
     <h1>Cadastrar um novo produto</h1>
 
     <form method="post" asp-controller="Produto" asp-action="Criar" enctype="multipart/form-data" class="row g-3">
-        <div class="col-12">
+        <div class="col-12 text-start pt-3">
             <label asp-for="Foto" for="inputFoto" class="form-label">Foto</label>
-            <input asp-for="Foto" type="file" class="form-control" id="inputFoto" name="Foto">
+            <div class="custom-file-upload">
+                <input asp-for="Foto" type="file" id="inputFoto" name="Foto" />
+                <span class="upload-text">Selecione uma imagem do seu produto...</span>
+            </div>
             @Html.ValidationMessageFor(x => x.Foto)
         </div>
         <div class="col-md-12">

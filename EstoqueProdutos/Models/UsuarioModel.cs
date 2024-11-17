@@ -27,6 +27,8 @@ namespace EstoqueProdutos.Models
         public DateTime DtInc { get; set; } = DateTime.Now;
         public DateTime? DtAlt { get; set; }
 
+        public byte[]? Logo { get; set; }
+
         public bool SenhaValida(string senha)
         {
             return Senha == senha.GerarHash();
