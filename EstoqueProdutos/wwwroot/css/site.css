@@ -6,6 +6,11 @@ html {
   font-size: 14px;
 }
 
+header {
+    color: #fff;
+    background-color: #0d6efd;
+}
+
 @media (min-width: 768px) {
   html {
     font-size: 16px;
@@ -257,8 +262,8 @@ main {
     }
 
     .custom-file-upload::before {
-        content: "\f093"; /* Unicode for upload icon in FontAwesome */
-        font-family: "Font Awesome 5 Free"; /* Ensure you have FontAwesome loaded */
+        content: "\f093";
+        font-family: "Font Awesome 5 Free";
         font-weight: 900;
         position: absolute;
         top: 50%;

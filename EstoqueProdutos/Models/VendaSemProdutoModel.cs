@@ -1,11 +1,10 @@
 ﻿using EstoqueProdutos.Enums;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace EstoqueProdutos.Models
 {
-    public class VendaModel
+    public class VendaSemProdutoModel
     {
         public int Id { get; set; }
 
@@ -21,18 +20,13 @@ namespace EstoqueProdutos.Models
         public FormaDePagamentoEnum FormaDePagamento { get; set; }
         public bool Parcelado { get; set; }
         public int QuantidadeDeParcela { get; set; }
-        public int QuantidadeProduto { get; set; }
+
         public DateTime DtInc { get; set; } = DateTime.Now;
-        public DateTime DtAlt { get; set;  } = DateTime.Now;
+        public DateTime DtAlt { get; set; } = DateTime.Now;
 
 
         public int UsuarioId { get; set; }
         public UsuarioModel Usuario { get; set; }
-
-        [NotMapped]
-        public List<int> ProdutoVendaId { get; set; } = new List<int>();
-        [NotMapped]
-        public List<ProdutoVendaModel> ProdutoVenda { get; set; } = new List<ProdutoVendaModel>();
 
     }
 }

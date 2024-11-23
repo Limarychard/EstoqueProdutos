@@ -20,11 +20,35 @@ namespace EstoqueProdutos.Controllers
             _usuarioRepositorio = usuarioRepositorio;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string? Nome = null, string? Login = null, string? Email = null, DateTime? DataCriacaoInicio = null, DateTime? DataCriacaoFim = null)
         {
-            var Clientes = _usuarioRepositorio.ListarTodos();
-            return View(Clientes);
+            var usuarios = _usuarioRepositorio.ListarTodos();
+
+            if (!string.IsNullOrEmpty(Nome))
+                usuarios = usuarios.Where(u => u.Nome.Contains(Nome, StringComparison.OrdinalIgnoreCase)).ToList();
+
+            if (!string.IsNullOrEmpty(Login))
+                usuarios = usuarios.Where(u => u.Login.Contains(Login, StringComparison.OrdinalIgnoreCase)).ToList();
+
+            if (!string.IsNullOrEmpty(Email))
+                usuarios = usuarios.Where(u => u.Email.Contains(Email, StringComparison.OrdinalIgnoreCase)).ToList();
+
+            if (DataCriacaoInicio.HasValue)
+                usuarios = usuarios.Where(u => u.DtInc >= DataCriacaoInicio.Value).ToList();
+
+            if (DataCriacaoFim.HasValue)
+                usuarios = usuarios.Where(u => u.DtInc <= DataCriacaoFim.Value).ToList();
+
+            ViewData["Nome"] = Nome;
+            ViewData["Login"] = Login;
+            ViewData["Email"] = Email;
+            ViewData["DataCriacaoInicio"] = DataCriacaoInicio?.ToString("yyyy-MM-dd");
+            ViewData["DataCriacaoFim"] = DataCriacaoFim?.ToString("yyyy-MM-dd");
+
+            return View(usuarios);
         }
+
+
 
         public IActionResult ObterImagem(int id)
         {

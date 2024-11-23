@@ -7,6 +7,7 @@ using EstoqueProdutos.Repositorio;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
@@ -81,14 +82,24 @@ namespace EstoqueProdutos.Controllers
         {
             var usuarioLogado = _sessao.BuscarSessaoDoUsuario();
 
+            var produtos = _produtoRepositorio.ListarPorUsuarioId(usuarioLogado.Id);
+
+            ViewBag.Produtos = new SelectList(produtos, "Id", "Nome");
+            ViewBag.ProdutosJson = JsonConvert.SerializeObject(produtos);
+
             ViewBag.Clientes = new SelectList(_clienteRepositorio.ListarPorUsuarioId(usuarioLogado.Id), "Id", "Nome");
-            ViewBag.Produtos = new SelectList(_produtoRepositorio.ListarPorUsuarioId(usuarioLogado.Id), "Id", "Nome");
             ViewBag.FormasDePagamento = ObterFormasDePagamento();
-            return View();
+
+            var vendaModel = new VendaModel
+            {
+                Valor = 0
+            };
+
+            return View(vendaModel);
         }
 
         [HttpPost]
-        public IActionResult Criar(VendaModel venda)
+        public IActionResult Criar(VendaModel venda, List<int> quantidadesProduto)
         {
             try
             {
@@ -99,40 +110,62 @@ namespace EstoqueProdutos.Controllers
                 ViewBag.FormasDePagamento = ObterFormasDePagamento();
 
                 venda.Cliente = _clienteRepositorio.ListarPorId(venda.ClienteId);
-                venda.Produto = _produtoRepositorio.ListarPorId(venda.ProdutoId);
+                venda.UsuarioId = usuarioLogado.Id;
 
                 ModelState.Remove("Cliente");
                 ModelState.Remove("Produto");
                 ModelState.Remove("Usuario");
 
+                venda.Valor = 0;
+
                 if (ModelState.IsValid)
                 {
+
                     if (venda.QuantidadeDeParcela == null)
                     {
                         venda.QuantidadeDeParcela = 0;
                     }
 
-                    venda.UsuarioId = usuarioLogado.Id;
+                    List<ProdutoVendaModel> produtosVenda = new List<ProdutoVendaModel>();
 
-                    var produto = _produtoRepositorio.ListarPorId(venda.ProdutoId);
-
-                    if(!(produto != null && produto.Quantidade >= venda.QuantidadeProduto))
+                    for (int i = 0; i < venda.ProdutoVendaId.Count; i++)
                     {
-                        TempData["MensagemErro"] = "Estoque insuficiente para a venda.";
-                        return RedirectToAction("Index");
+                        var produto = _produtoRepositorio.ListarPorId(venda.ProdutoVendaId[i]);
+
+                        if (produto == null || produto.Quantidade < quantidadesProduto[i])
+                        {
+                            TempData["MensagemErro"] = $"Estoque insuficiente para o produto {produto?.Nome}.";
+                            return RedirectToAction("Index");
+                        }
+
+                        produto.Quantidade -= quantidadesProduto[i];
+                        _produtoRepositorio.Alterar(produto);
+
+                        produtosVenda.Add(new ProdutoVendaModel
+                        {
+                            ProdutoId = venda.ProdutoVendaId[i],
+                            NomeProduto = produto.Nome,
+                            Quantidade = quantidadesProduto[i],
+                            ValorProduto = produto.Valor
+                        });
+
+
+                        var valorTotal = produto.Valor * quantidadesProduto[i];
+                        venda.Valor += valorTotal;
                     }
 
-                    produto.Quantidade -= venda.QuantidadeProduto;
-                    _produtoRepositorio.Alterar(produto);
-                    _vendaRepositorio.Adicionar(venda);
+                    _vendaRepositorio.Adicionar(venda, produtosVenda);
 
                     TempData["MensagemSucesso"] = "Parabéns, você fez uma nova venda!";
                     return RedirectToAction("Index");
                 }
+
                 return View();
+
             } catch(Exception err)
             {
-                TempData["MensagemErro"] = $"Ops, não conseguimos criar sua nova venda, detalhe do erro: {err.Message}";
+                var innerExceptionMessage = err.InnerException?.Message ?? "Sem detalhes adicionais";
+                TempData["MensagemErro"] = $"Ops, não conseguimos criar sua nova venda. Detalhe do erro: {err.Message}. Detalhes internos: {innerExceptionMessage}";
                 return RedirectToAction("Index");
             }
         }
@@ -141,52 +174,58 @@ namespace EstoqueProdutos.Controllers
         public IActionResult Editar(int id)
         {
             var usuarioLogado = _sessao.BuscarSessaoDoUsuario();
+            var venda = _vendaRepositorio.ListarPorId(id);
 
-            VendaModel venda = _vendaRepositorio.ListarPorId(id);
-            ViewBag.Clientes = new SelectList(_clienteRepositorio.ListarPorUsuarioId(usuarioLogado.Id), "Id", "Nome");
-            ViewBag.Produtos = new SelectList(_produtoRepositorio.ListarPorUsuarioId(usuarioLogado.Id), "Id", "Nome");
+            ViewBag.Clientes = new SelectList(
+                _clienteRepositorio.ListarPorUsuarioId(usuarioLogado.Id),
+                "Id",
+                "Nome"
+            );
+
             ViewBag.FormasDePagamento = ObterFormasDePagamento();
+
             return View(venda);
         }
 
         [HttpPost]
-        public IActionResult Editar(VendaModel venda)
+        public IActionResult Editar(VendaSemProdutoModel vendaSemProduto)
         {
             try
             {
                 var usuarioLogado = _sessao.BuscarSessaoDoUsuario();
 
                 ViewBag.Clientes = new SelectList(_clienteRepositorio.ListarPorUsuarioId(usuarioLogado.Id), "Id", "Nome");
-                ViewBag.Produtos = new SelectList(_produtoRepositorio.ListarPorUsuarioId(usuarioLogado.Id), "Id", "Nome");
                 ViewBag.FormasDePagamento = ObterFormasDePagamento();
 
                 ModelState.Remove("Cliente");
                 ModelState.Remove("Produto");
                 ModelState.Remove("Usuario");
 
+                VendaModel venda = null;
+
                 if (ModelState.IsValid)
                 {
-                    venda.UsuarioId = usuarioLogado.Id;
-
-                    var produto = _produtoRepositorio.ListarPorId(venda.ProdutoId);
-
-                    if (!(produto != null && produto.Quantidade >= venda.QuantidadeProduto))
+                    venda = new VendaModel()
                     {
-                        TempData["MensagemErro"] = "Estoque insuficiente para a venda.";
-                        return RedirectToAction("Index");
-                    }
+                        Id = vendaSemProduto.Id,
+                        Valor = vendaSemProduto.Valor,
+                        ClienteId = vendaSemProduto.ClienteId,
+                        FormaDePagamento = vendaSemProduto.FormaDePagamento,
+                        Parcelado = vendaSemProduto.Parcelado,
+                        QuantidadeDeParcela = vendaSemProduto.QuantidadeDeParcela
 
-                    produto.Quantidade -= venda.QuantidadeProduto;
-                    _produtoRepositorio.Alterar(produto);
+                    };
+
                     _vendaRepositorio.Alterar(venda);
                     TempData["MensagemSucesso"] = "Venda editada com sucesso!";
                     return RedirectToAction("Index");
                 }
 
-                return View();
-            } catch(Exception err)
+                return View(vendaSemProduto);
+            }
+            catch (Exception err)
             {
-                TempData["MensagemErro"] = $"Ops, não conseguimos alterar sua venda, detalhe do erro: {err.Message}";
+                TempData["MensagemErro"] = $"Ops, não conseguimos alterar sua venda. Detalhes do erro: {err.Message}";
                 return RedirectToAction("Index");
             }
         }
@@ -195,6 +234,121 @@ namespace EstoqueProdutos.Controllers
         public IActionResult Apagar(VendaModel venda)
         {
             _vendaRepositorio.Deletar(venda);
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public IActionResult EditarProdutoVenda(int vendaId, int id)
+        {
+            var usuarioLogado = _sessao.BuscarSessaoDoUsuario();
+            ViewBag.Produtos = new SelectList(_produtoRepositorio.ListarPorUsuarioId(usuarioLogado.Id), "Id", "Nome");
+            ViewBag.VendaId = vendaId;
+
+            var produtoVenda = _vendaRepositorio.ListarProdutoVendaPorId(id);
+
+            if (produtoVenda == null || produtoVenda.VendaId != vendaId)
+            {
+                return NotFound();
+            }
+
+            ViewBag.FormasDePagamento = ObterFormasDePagamento();
+            return View(produtoVenda);
+        }
+
+        [HttpPost]
+        public IActionResult EditarProdutoVenda(int vendaId, ProdutoVendaModel produtoVenda)
+        {
+            try
+            {
+                var usuarioLogado = _sessao.BuscarSessaoDoUsuario();
+
+                var produtoVendaAtual = _vendaRepositorio.ListarProdutoVendaPorId(produtoVenda.Id);
+
+                if (produtoVendaAtual == null)
+                {
+                    TempData["MensagemErro"] = "Produto da venda não encontrado.";
+                    return RedirectToAction("Detalhes", new { id = vendaId });
+                }
+
+                var produto = _produtoRepositorio.ListarPorId(produtoVenda.ProdutoId);
+
+                if (produto == null)
+                {
+                    TempData["MensagemErro"] = "Produto não encontrado no estoque.";
+                    return RedirectToAction("Detalhes", new { id = vendaId });
+                }
+
+                produtoVenda.NomeProduto = produto.Nome;
+
+                var diferencaQuantidade = produtoVenda.Quantidade - produtoVendaAtual.Quantidade;
+
+                if (produto.Quantidade < diferencaQuantidade)
+                {
+                    TempData["MensagemErro"] = $"Estoque insuficiente para o produto {produto.Nome}.";
+                    return RedirectToAction("Detalhes", new { id = vendaId });
+                }
+
+                produto.Quantidade -= diferencaQuantidade;
+                _produtoRepositorio.Alterar(produto);
+
+                produtoVendaAtual.NomeProduto = produto.Nome;
+                produtoVendaAtual.Quantidade = produtoVenda.Quantidade;
+                produtoVendaAtual.ValorProduto = produtoVenda.ValorProduto;
+
+                _vendaRepositorio.AlterarProdutoVenda(produtoVendaAtual);
+
+                var venda = _vendaRepositorio.ListarPorId(vendaId);
+
+                if (venda != null && venda.ProdutoVenda != null)
+                {
+                    venda.Valor = 0;
+
+                    Console.WriteLine($"Total de produtos na venda: {venda.ProdutoVenda.Count}");
+
+                    foreach (var itemProdutoVenda in venda.ProdutoVenda)
+                    {
+                        Console.WriteLine($"Processando produto: {itemProdutoVenda.NomeProduto}, Quantidade: {itemProdutoVenda.Quantidade}, Valor: {itemProdutoVenda.ValorProduto}");
+
+                        var valorTotalProduto = itemProdutoVenda.ValorProduto * itemProdutoVenda.Quantidade;
+                        venda.Valor += valorTotalProduto;
+                    }
+                    _vendaRepositorio.Alterar(venda);
+                }
+
+                TempData["MensagemSucesso"] = "Produto editado e valor total atualizado com sucesso!";
+                return RedirectToAction("Index");
+            }
+            catch (Exception err)
+            {
+                var innerExceptionMessage = err.InnerException?.Message ?? "Sem detalhes adicionais";
+                TempData["MensagemErro"] = $"Ops, não conseguimos editar o produto da venda. Detalhes do erro: {err.Message}. Detalhes internos: {innerExceptionMessage}";
+                return RedirectToAction("Index");
+            }
+        }
+
+        [HttpPost]
+        public IActionResult ApagarProduto(ProdutoVendaModel produtoVenda)
+        {
+            _vendaRepositorio.DeletarProduto(produtoVenda);
+
+            var venda = _vendaRepositorio.ListarPorId(produtoVenda.VendaId);
+
+            if (venda != null && venda.ProdutoVenda != null)
+            {
+                venda.Valor = 0;
+
+                Console.WriteLine($"Total de produtos na venda: {venda.ProdutoVenda.Count}");
+
+                foreach (var itemProdutoVenda in venda.ProdutoVenda)
+                {
+                    Console.WriteLine($"Processando produto: {itemProdutoVenda.NomeProduto}, Quantidade: {itemProdutoVenda.Quantidade}, Valor: {itemProdutoVenda.ValorProduto}");
+
+                    var valorTotalProduto = itemProdutoVenda.ValorProduto * itemProdutoVenda.Quantidade;
+                    venda.Valor += valorTotalProduto;
+                }
+                _vendaRepositorio.Alterar(venda);
+            }
+
             return RedirectToAction("Index");
         }
     }

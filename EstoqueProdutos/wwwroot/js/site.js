@@ -65,7 +65,6 @@ $(document).ready(function () {
     });
 });
 
-// Fecha o alerta ao clicar no botão de fechar
 $('.close-alert').click(function (e) {
     e.preventDefault();
     $(this).closest('.alert').hide('slow');

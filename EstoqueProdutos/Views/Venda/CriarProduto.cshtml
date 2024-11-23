@@ -1,0 +1,23 @@
+﻿@model ProdutoVendaModel;
+@{
+    ViewBag.Title = "Criar Produto";
+}
+
+<h2>Criar Produto</h2>
+
+<form method="post">
+    <div class="mb-3">
+        <label for="NomeProduto" class="form-label">Nome do Produto</label>
+        <input type="text" class="form-control" id="NomeProduto" name="NomeProduto" required />
+    </div>
+    <div class="mb-3">
+        <label for="Quantidade" class="form-label">Quantidade</label>
+        <input type="number" class="form-control" id="Quantidade" name="Quantidade" required />
+    </div>
+    <div class="mb-3">
+        <label for="ValorProduto" class="form-label">Valor</label>
+        <input type="number" class="form-control" id="ValorProduto" name="ValorProduto" required />
+    </div>
+    <input type="hidden" name="VendaId" value="@ViewBag.VendaId" />
+    <button type="submit" class="btn btn-primary">Criar Produto</button>
+</form>

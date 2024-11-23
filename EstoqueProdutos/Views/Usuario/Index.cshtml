@@ -4,7 +4,7 @@
 
 @model List<UsuarioModel>;
 
-    @if (TempData["MensagemSucesso"] != null)
+@if (TempData["MensagemSucesso"] != null)
 {
     <div class="alert alert-success" role="alert">
         @TempData["MensagemSucesso"]
@@ -20,6 +20,36 @@ else if (TempData["MensagemErro"] != null)
 }
 
 <div class="container">
+
+    <div class="mb-3">
+        <form asp-controller="Usuario" asp-action="Index" method="get" class="row">
+            <div class="col-md-2">
+                <label for="Nome" class="form-label">Nome</label>
+                <input type="text" class="form-control" id="Nome" name="Nome" value="@ViewData["Nome"]" placeholder="Filtrar por Nome">
+            </div>
+            <div class="col-md-2">
+                <label for="Login" class="form-label">Login</label>
+                <input type="text" class="form-control" id="Login" name="Login" value="@ViewData["Login"]" placeholder="Filtrar por Login">
+            </div>
+            <div class="col-md-2">
+                <label for="Email" class="form-label">Email</label>
+                <input type="text" class="form-control" id="Email" name="Email" value="@ViewData["Email"]" placeholder="Filtrar por Email">
+            </div>
+            <div class="col-md-2">
+                <label for="DataCriacaoInicio" class="form-label">Dt. Criação - Início</label>
+                <input type="date" class="form-control" id="DataCriacaoInicio" name="DataCriacaoInicio" value="@ViewData["DataCriacaoInicio"]">
+            </div>
+            <div class="col-md-2">
+                <label for="DataCriacaoFim" class="form-label">Dt. Criação - Fim</label>
+                <input type="date" class="form-control" id="DataCriacaoFim" name="DataCriacaoFim" value="@ViewData["DataCriacaoFim"]">
+            </div>
+            <div class="col-md-2 d-flex align-items-md-end">
+                <button type="submit" class="btn btn-primary me-lg-3 w-50"><i class="fa-solid fa-magnifying-glass"></i></button>
+                <a asp-controller="Usuario" asp-action="Index" class="btn btn-secondary w-100">Limpar</a>
+            </div>
+        </form>
+    </div>
+
 
     <div class="justify-content-between align-items-center mb-3">
         <a asp-controller="Usuario" asp-action="Criar" class="btn btn-primary">Novo usuário</a>

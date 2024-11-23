@@ -6,41 +6,35 @@
 
     <form method="post" asp-controller="Venda" asp-action="Criar" class="row g-3">
         <div class="col-md-12">
-            <div class="col-12">
-                <label asp-for="ClienteId" for="inputCliente" class="form-label">Cliente</label>
+            <label asp-for="ClienteId" for="inputCliente" class="form-label">Cliente</label>
                 <select asp-for="ClienteId" class="form-select" aria-label="Default select example">
-                    <option value="" selected>Selecione o cliente</option>
-                    @foreach (var cliente in ViewBag.Clientes)
-                    {
-                        <option value="@cliente.Value">@cliente.Text</option>
-                    }
-                </select>
-                @Html.ValidationMessageFor(x => x.ClienteId)
-            </div>
+                <option value="" selected>Selecione o cliente</option>
+                @foreach (var cliente in ViewBag.Clientes)
+                {
+                    <option value="@cliente.Value">@cliente.Text</option>
+                }
+            </select>
+            @Html.ValidationMessageFor(x => x.ClienteId)
         </div>
+
         <div class="col-md-12">
-            <div class="col-md-12">
-                <div class="col-12">
-                    <label asp-for="ProdutoId" for="inputCliente" class="form-label">Produto</label>
-                    <select asp-for="ProdutoId" class="form-select" aria-label="Default select example">
-                        <option value="" selected>Selecione o produto</option>
-                        @foreach (var produto in ViewBag.Produtos)
-                        {
-                            <option value="@produto.Value">@produto.Text</option>
-                        }
-                    </select>
-                    @Html.ValidationMessageFor(x => x.ProdutoId)
-                </div>
-            </div>
+            <label asp-for="ProdutoVendaId">
+                Clique para selecionar um ou mais produtos:
+            </label>
+            <select asp-for="ProdutoVendaId" id="idSelect2" class="form-select select2" multiple>
+                @foreach (var produto in ViewBag.Produtos)
+                {
+                    <option value="@produto.Value">@produto.Text</option>
+                }
+            </select>
+            @Html.ValidationMessageFor(x => x.ProdutoVendaId)
         </div>
+
+        <div id="quantidadeProdutosDiv" class="d-none"></div>
+
         <div class="col-12">
-            <label asp-for="QuantidadeProduto" for="inpuQuantidadeProduto" class="form-label">Quantidade</label>
-            <input asp-for="QuantidadeProduto" type="text" class="form-control" id="inputQuantidadeProduto">
-            @Html.ValidationMessageFor(x => x.QuantidadeProduto)
-        </div>
-        <div class="col-12">
-            <label asp-for="Valor" for="inputValor" class="form-label">Valor</label>
-            <input asp-for ="Valor" type="text" class="form-control" id="inputValor">
+            <label asp-for="Valor" for="inputValor" class="form-label">Valor Total</label>
+            <input asp-for="Valor" type="text" class="form-control" id="inputValor" value="@Model?.Valor" />
             @Html.ValidationMessageFor(x => x.Valor)
         </div>
         <div class="col-12">
@@ -74,3 +68,67 @@
     </form>
 
 </div>
+
+@section Scripts {
+    <script>
+        // Parse os produtos enviados pelo controlador
+        var produtos = @Html.Raw(ViewBag.ProdutosJson);
+
+        // Quando a página carregar
+        $(document).ready(function () {
+            $('#idSelect2').select2({
+                placeholder: "Selecione os produtos",
+                allowClear: true
+            });
+
+            // Evento ao mudar os produtos selecionados
+            $('#idSelect2').on('change', function () {
+                var quantidadeDiv = $('#quantidadeProdutosDiv');
+                quantidadeDiv.removeClass('d-none');
+                quantidadeDiv.empty();
+
+                var selectedOptions = $(this).val();
+                var valorTotal = 0;
+
+                // Itera sobre os produtos selecionados
+                selectedOptions.forEach(function (produtoId) {
+                    var produto = produtos.find(p => p.Id == produtoId);
+
+                    if (produto) {
+                        var inputQuantidade = $('<input>', {
+                            type: 'number',
+                            name: 'quantidadesProduto',
+                            value: 1,
+                            min: 1,
+                            class: 'form-control quantidadeProduto',
+                            'data-preco': produto.Valor
+                        });
+
+                        var label = $('<label>').text("Quantidade para " + produto.Nome);
+
+                        var div = $('<div>').addClass('mb-3');
+                        div.append(label).append(inputQuantidade);
+                        quantidadeDiv.append(div);
+
+                        // Atualiza o valor total quando a quantidade muda
+                        inputQuantidade.on('input', function () {
+                            var quantidade = parseInt($(this).val()) || 0;
+                            valorTotal = 0;
+
+                            $('.quantidadeProduto').each(function () {
+                                var preco = parseFloat($(this).data('preco'));
+                                var qtd = parseInt($(this).val()) || 0;
+                                valorTotal += preco * qtd;
+                            });
+
+                            $('#inputValor').val(valorTotal.toFixed(2));
+                        });
+                    }
+                });
+
+                // Calcula o valor total inicialmente
+                $('.quantidadeProduto').trigger('input');
+            });
+        });
+    </script>
+}

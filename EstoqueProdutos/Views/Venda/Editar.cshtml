@@ -6,41 +6,20 @@
 
     <form method="post" asp-controller="Venda" asp-action="Editar" class="row g-3">
         <div class="col-md-12">
-            <div class="col-12">
-                <label asp-for="ClienteId" for="inputCliente" class="form-label">Cliente</label>
-                <select asp-for="ClienteId" class="form-select" aria-label="Default select example">
-                    <option value="" selected>Selecione o cliente</option>
-                    @foreach (var cliente in ViewBag.Clientes)
-                    {
-                        <option value="@cliente.Value">@cliente.Text</option>
-                    }
-                </select>
-                @Html.ValidationMessageFor(x => x.ClienteId)
-            </div>
+            <label asp-for="ClienteId" for="inputCliente" class="form-label">Cliente</label>
+            <select asp-for="ClienteId" class="form-select" aria-label="Default select example">
+                <option value="" selected>Selecione o cliente</option>
+                @foreach (var cliente in ViewBag.Clientes)
+                {
+                    <option value="@cliente.Value">@cliente.Text</option>
+                }
+            </select>
+            @Html.ValidationMessageFor(x => x.ClienteId)
         </div>
-        <div class="col-md-12">
-            <div class="col-md-12">
-                <div class="col-12">
-                    <label asp-for="ProdutoId" for="inputCliente" class="form-label">Produto</label>
-                    <select asp-for="ProdutoId" class="form-select" aria-label="Default select example">
-                        <option value="" selected>Selecione o produto</option>
-                        @foreach (var cliente in ViewBag.Produtos)
-                        {
-                            <option value="@cliente.Value">@cliente.Text</option>
-                        }
-                    </select>
-                    @Html.ValidationMessageFor(x => x.ProdutoId)
-                </div>
-            </div>
-        </div>
+
         <div class="col-12">
-            <label asp-for="QuantidadeProduto" for="inpuQuantidadeProduto" class="form-label">Quantidade</label>
-            <input asp-for="QuantidadeProduto" type="text" class="form-control" id="inputQuantidadeProduto">
-            @Html.ValidationMessageFor(x => x.QuantidadeProduto)
-        </div>
-        <div class="col-12">
-            <label asp-for="Valor" for="inputValor" class="form-label">Valor</label>
-            <input asp-for="Valor" type="text" class="form-control" id="inputValor">
+            <label asp-for="Valor" for="inputValor" class="form-label">Valor Total</label>
+            <input asp-for="Valor" type="text" class="form-control" id="inputValor" value="@Model?.Valor" />
             @Html.ValidationMessageFor(x => x.Valor)
         </div>
         <div class="col-12">

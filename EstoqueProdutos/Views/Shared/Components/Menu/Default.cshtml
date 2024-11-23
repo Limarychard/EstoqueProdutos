@@ -52,14 +52,15 @@
                         <span class="item-description">Usuários</span>
                     </a>
                 </li>
+
+                <li class="side-item @(ViewContext.RouteData.Values["controller"].ToString() == "Configuracao" ? "active" : "")">
+                    <a asp-area="" asp-controller="Configuracao" asp-action="Index">
+                        <i class="fa-solid fa-gear"></i>
+                        <span class="item-description">Configurações</span>
+                    </a>
+                </li>
             }
 
-            <li class="side-item @(ViewContext.RouteData.Values["controller"].ToString() == "Configuracao" ? "active" : "")">
-                <a asp-area="" asp-controller="Configuracao" asp-action="Index">
-                    <i class="fa-solid fa-gear"></i>
-                    <span class="item-description">Configurações</span>
-                </a>
-            </li>
         </ul>
 
         <a class="btn" id="open_btn">
