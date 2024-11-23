@@ -6,6 +6,7 @@ using EstoqueProdutos.Models;
 using EstoqueProdutos.Repositorio;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
@@ -26,7 +27,7 @@ namespace EstoqueProdutos.Controllers
             _sessao = sessao;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string? Nome = null, long? Telefone = null, long? CPF = null, bool? BomPagador = null, DateTime? DataUltimaCompraInicio = null, DateTime? DataUltimaCompraInicioFim = null)
         {
             var usuarioLogado = _sessao.BuscarSessaoDoUsuario();
 
@@ -39,6 +40,37 @@ namespace EstoqueProdutos.Controllers
             {
                 Clientes = _clienteRepositorio.ListarPorUsuarioId(usuarioLogado.Id);
             }
+
+            if (!string.IsNullOrEmpty(Nome))
+                Clientes = Clientes.Where(u => u.Nome.Contains(Nome, StringComparison.OrdinalIgnoreCase)).ToList();
+
+            if (Telefone != 0)
+            {
+                string telefoneFiltro = Telefone.ToString();
+                Clientes = Clientes.Where(u => u.Telefone.ToString().Contains(telefoneFiltro)).ToList();
+            }
+
+            if (CPF != null)
+            {
+                string CpfFiltro = CPF.ToString();
+                Clientes = Clientes.Where(u => u.Telefone.ToString().Contains(CpfFiltro)).ToList();
+            }
+
+            if (BomPagador.HasValue)
+                Clientes = Clientes.Where(u => u.BomPagador == BomPagador).ToList();
+
+            if (DataUltimaCompraInicio.HasValue)
+                Clientes = Clientes.Where(u => u.DtUltCompra >= DataUltimaCompraInicio.Value).ToList();
+
+            if (DataUltimaCompraInicioFim.HasValue)
+                Clientes = Clientes.Where(u => u.DtUltCompra <= DataUltimaCompraInicioFim.Value).ToList();
+
+            ViewData["Nome"] = Nome;
+            ViewData["Telefone"] = Telefone;
+            ViewData["CPF"] = CPF;
+            ViewData["BomPagador"] = BomPagador;
+            ViewData["DataUltimaCompraInicio"] = DataUltimaCompraInicio?.ToString("yyyy-MM-dd");
+            ViewData["DataUltimaCompraInicioFim"] = DataUltimaCompraInicioFim?.ToString("yyyy-MM-dd");
 
             return View(Clientes);
         }

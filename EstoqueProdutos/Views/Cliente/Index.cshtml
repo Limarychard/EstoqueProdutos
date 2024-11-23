@@ -21,6 +21,43 @@ else if (TempData["MensagemErro"] != null)
 
 <div class="container">
 
+    <div class="mb-3">
+        <form asp-controller="Cliente" asp-action="Index" method="get" class="row">
+            <div class="col-md-3">
+                <label for="Nome" class="form-label">Nome</label>
+                <input type="text" class="form-control" id="Nome" name="Nome" value="@ViewData["Nome"]" placeholder="Filtrar por Nome">
+            </div>
+            <div class="col-md-3">
+                <label for="Login" class="form-label">Telefone</label>
+                <input type="text" class="form-control" id="Telefone" name="Telefone" value="@ViewData["Telefone"]" placeholder="Filtrar por Telefone">
+            </div>
+            <div class="col-md-3">
+                <label for="Email" class="form-label">CPF</label>
+                <input type="text" class="form-control" id="CPF" name="CPF" value="@ViewData["CPF"]" placeholder="Filtrar por CPF">
+            </div>
+            <div class="col-md-3">
+                <label for="BomPagador" class="form-label">Bom Pagador</label>
+                <select class="form-select form-control" id="BomPagador" name="BomPagador" value="@ViewData["BomPagador"]">
+                    <option value="@null">Selecione</option>
+                    <option value="@true"> Sim </option>
+                    <option value="@false"> Não </option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="DataUltimaCompraInicio" class="form-label">Dt. Ult. Compra - Início</label>
+                <input type="date" class="form-control" id="DataUltimaCompraInicio" name="DataUltimaCompraInicio" value="@ViewData["DataUltimaCompraInicio"]">
+            </div>
+            <div class="col-md-3">
+                <label for="DataUltimaCompraFim" class="form-label">Dt. Ult. Compra - Fim</label>
+                <input type="date" class="form-control" id="DataUltimaCompraFim" name="DataUltimaCompraFim" value="@ViewData["DataUltimaCompraFim"]">
+            </div>
+            <div class="col-md-3 d-flex align-items-md-end end">
+                <button type="submit" class="btn btn-primary me-lg-3 w-50"><i class="fa-solid fa-magnifying-glass"></i></button>
+                <a asp-controller="Cliente" asp-action="Index" class="btn btn-secondary w-100">Limpar</a>
+            </div>
+        </form>
+    </div>
+
     <div class="justify-content-between align-items-center mb-3">
         <a asp-controller="Cliente" asp-action="Criar" class="btn btn-primary">Novo cliente</a>
     </div>

@@ -20,13 +20,14 @@ $(document).ready(function () {
     getDatatable('#usuariosTable');
     getDatatable('#clientesTable');
     getDatatable('#vendasTable');
+    getDatatable('#ProdutosVendasTable', true)
 });
 
-function getDatatable(id) {
+function getDatatable(id, enableSearching = false) {
     $(id).DataTable({
         "ordering": true,
         "paging": true,
-        "searching": true,
+        "searching": enableSearching,
         "oLanguage": {
             "sEmptyTable": "Nenhum registro encontrado na tabela",
             "sInfo": "Mostrar _START_ até _END_ de _TOTAL_ registros",
@@ -38,7 +39,6 @@ function getDatatable(id) {
             "sLoadingRecords": "Carregando...",
             "sProcessing": "Processando...",
             "sZeroRecords": "Nenhum registro encontrado",
-            "sSearch": "Pesquisar",
             "oPaginate": {
                 "sNext": ">",
                 "sPrevious": "<",

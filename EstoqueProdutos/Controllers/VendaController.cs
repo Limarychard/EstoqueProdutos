@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Reflection;
 
 namespace EstoqueProdutos.Controllers
@@ -60,9 +61,10 @@ namespace EstoqueProdutos.Controllers
             return displayAttribute?.Name ?? formaDePagamento.ToString();
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string? NomeCliente = null, int? Valor = null, FormaDePagamentoEnum? FormaDePagamento = null, bool? Parcelado = null, char? QtdParcela = null,  DateTime? DataVendaInicio = null, DateTime? DataVendaFim = null)
         {
             var usuarioLogado = _sessao.BuscarSessaoDoUsuario();
+            ViewBag.FormasDePagamento = ObterFormasDePagamento();
 
             List<VendaModel> Vendas;
             if (usuarioLogado.Perfil == PerfilEnum.Admin)
@@ -73,6 +75,42 @@ namespace EstoqueProdutos.Controllers
             {
                 Vendas = _vendaRepositorio.ListarPorUsuarioId(usuarioLogado.Id);
             }
+
+            if (!string.IsNullOrEmpty(NomeCliente))
+                Vendas = Vendas.Where(u => u.Cliente.Nome.Contains(NomeCliente, StringComparison.OrdinalIgnoreCase)).ToList();
+
+            if (Valor != null)
+            {
+                string valorFiltro = Valor.ToString();
+                Vendas = Vendas.Where(u => u.Valor.ToString().Contains(valorFiltro)).ToList();
+            }
+
+            if (FormaDePagamento != null)
+                Vendas = Vendas.Where(u => u.FormaDePagamento == FormaDePagamento).ToList();
+
+            if (Parcelado.HasValue)
+                Vendas = Vendas.Where(u => u.Parcelado == Parcelado.Value).ToList();
+
+            if (QtdParcela != null)
+            {
+                string QtdParcelaFiltro = QtdParcela.ToString();
+                Vendas = Vendas.Where(u => u.QuantidadeDeParcela.ToString().Contains(QtdParcelaFiltro)).ToList();
+            }
+
+            if (DataVendaInicio.HasValue)
+                Vendas = Vendas.Where(u => u.DtInc >= DataVendaInicio.Value).ToList();
+
+            if (DataVendaFim.HasValue)
+                Vendas = Vendas.Where(u => u.DtInc <= DataVendaFim.Value).ToList();
+
+            ViewData["NomeCliente"] = NomeCliente;
+            ViewData["Valor"] = Valor;
+            ViewData["FormaDePagamento"] = FormaDePagamento;
+            ViewData["Parcelado"] = Parcelado;
+            ViewData["QtdParcela"] = QtdParcela;
+            ViewData["DataVendaInicio"] = DataVendaInicio?.ToString("yyyy-MM-dd");
+            ViewData["DataVendaFim"] = DataVendaFim?.ToString("yyyy-MM-dd");
+
 
             return View(Vendas);
         }

@@ -13,20 +13,70 @@
     }
 }
 
-    @if (TempData["MensagemSucesso"] != null)
-    {
-        <div class="alert alert-success" role="alert">
-            @TempData["MensagemSucesso"]
-            <button type="button" class="btn-close float-end close-alert" data-bs-dismiss="modal" aria-label="Close"></button>
+@if (TempData["MensagemSucesso"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["MensagemSucesso"]
+        <button type="button" class="btn-close float-end close-alert" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+}
+else if (TempData["MensagemErro"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["MensagemErro"]
+        <button type="button" class="btn-close float-end close-alert" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+}
+
+<div class="mb-3">
+    <form asp-controller="Venda" asp-action="Index" method="get" class="row">
+        <div class="col-md-3 mb-1">
+            <label for="NomeCliente" class="form-label">Nome Cliente</label>
+            <input type="text" class="form-control" id="NomeCliente" name="NomeCliente" value="@ViewData["NomeCliente"]" placeholder="Filtrar por Nome do Cliente">
         </div>
-    }
-    else if (TempData["MensagemErro"] != null)
-    {
-        <div class="alert alert-danger" role="alert">
-            @TempData["MensagemErro"]
-            <button type="button" class="btn-close float-end close-alert" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="col-md-3 mb-1">
+            <label for="Valor" class="form-label">Valor</label>
+            <input type="text" class="form-control" id="Valor" name="Valor" value="@ViewData["Valor"]" placeholder="Filtrar por Valor">
         </div>
-    }
+        <div class="col-md-3 mb-1">
+            <label for="FormaDePagamento" class="form-label">Forma de pagamento</label>
+            <select class="form-select form-control" id="FormaDePagamento" name="FormaDePagamento" value="@ViewData["FormaDePagamento"]">
+                <option selected>Selecione</option>
+                @if (ViewBag.FormasDePagamento != null)
+                {
+                    @foreach (var opt in ViewBag.FormasDePagamento)
+                    {
+                        <option value="@opt.Value">@opt.Text</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="Parcelado" class="form-label">Parcelado</label>
+            <select class="form-select form-control" id="Parcelado" name="Parcelado" value="@ViewData["Parcelado"]">
+                <option value="@null">Selecione</option>
+                <option value="@true"> Sim </option>
+                <option value="@false"> Não </option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="QtdParcela" class="form-label">Qtd. Parcelas</label>
+            <input type="number" max="12" class="form-control" id="QtdParcela" name="QtdParcela" value="@ViewData["QtdParcela"]" placeholder="Filtrar por Qtd. Parcelas">
+        </div>
+        <div class="col-md-3">
+            <label for="DataVendaInicio" class="form-label">Dt. Venda - Início</label>
+            <input type="date" class="form-control" id="DataVendaInicio" name="DataVendaInicio" value="@ViewData["DataVendaInicio"]">
+        </div>
+        <div class="col-md-3">
+            <label for="DataVendaFim" class="form-label">Dt. Venda - Fim</label>
+            <input type="date" class="form-control" id="DataVendaFim" name="DataVendaFim" value="@ViewData["DataVendaFim"]">
+        </div>
+        <div class="col-md-3 d-flex align-items-md-end end">
+            <button type="submit" class="btn btn-primary me-lg-3 w-50"><i class="fa-solid fa-magnifying-glass"></i></button>
+            <a asp-controller="Venda" asp-action="Index" class="btn btn-secondary w-100">Limpar</a>
+        </div>
+    </form>
+</div>
 
 <div class="container">
 
@@ -84,7 +134,7 @@
                                         </div>
                                         <div class="modal-body">
                                             <!-- Conteúdo do modal -->
-                                            <table class="table table-bordered">
+                                            <table id="ProdutosVendasTable" class="table table-bordered">
                                                 <thead>
                                                     <tr>
                                                         <th scope="col"></th>

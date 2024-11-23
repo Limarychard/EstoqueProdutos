@@ -145,6 +145,7 @@ main {
     position: fixed;
     transition: all .5s;
     min-width: 82px;
+    z-index: 10;
 }
 
 #sidebar_content {
