@@ -69,5 +69,28 @@ namespace EstoqueProdutos.Repositorio
             _bancoContext.SaveChanges();
             return produto;
         }
+
+        public PagedResult<ProdutoModel> GetPaged(int page, int pageSize)
+        {
+            var totalItems = _bancoContext.Produtos.Count();
+
+            var produtos = _bancoContext.Produtos
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            return new PagedResult<ProdutoModel>
+            {
+                Items = produtos,
+                TotalItems = totalItems,
+                CurrentPage = page,
+                PageSize = pageSize
+            };
+        }
+
+        public int Count()
+        {
+            return _bancoContext.Produtos.Count();
+        }
     }
 }

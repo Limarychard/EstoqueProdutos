@@ -2,22 +2,45 @@
 
 <div class="container">
 
-    <div class="justify-content-between align-items-center mb-3">
-        <a asp-action="Criar" class="btn btn-primary">Novo produto</a>
+    <div class="row align-items-center mb-3">
+        <div class="col-12 mb-2">
+            <a asp-action="Criar" class="btn btn-primary">Novo produto</a>
+        </div>
+
+        <form asp-controller="Produto" method="get" asp-action="Index" class="d-flex w-100 align-items-center">
+            <div>
+                <select class="form-select" id="pageSize" name="pageSize" value="@ViewData["pageSize"]">
+                    <option value="4">4</option>
+                    <option value="8">8</option>
+                    <option value="16">16</option>
+                    <option value="40">40</option>
+                    <option value="400">400</option>
+                </select>
+            </div>
+
+            <div class="mx-auto w-75">
+                <div class="input-group">
+                    <input type="text" name="NomeProduto" class="form-control" placeholder="Pesquisar por nome..." value="@ViewData["NomeProduto"]" />
+                    <button type="submit" class="btn btn-primary">Pesquisar</button>
+                </div>
+            </div>
+        </form>
     </div>
+
+
     @if(Model != null)
     {
         <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
             @foreach (var produto in Model)
             {
                 <div class="col">
-                    <div class="card border-2 rounded-lg h-100" style="width: 18rem;">
+                    <div class="card shadow-sm h-100" style="width: 18rem;">
                         <img src="@Url.Action("ObterImagem", "Produto", new { id = produto.Id })" class="card-img-top" alt="Imagem do Produto">
                         <div class="card-body">
                             <h3 class="card-title">@produto.Nome</h3>
-                            <p class="card-text">R$@produto.Valor</p>
-                            <p class="card-text">@produto.Descricao</p>
-                            <p class="card-text">Quantidade: @produto.Quantidade</p>
+                            <p class="card-text">Valor: R$@produto.Valor</p>
+                            <p class="card-text">Descrição: @produto.Descricao</p>
+                            <p class="card-text">Quantidade em estoque: @produto.Quantidade</p>
                         </div>
                         <div class="d-flex gap-2 p-2">
                             <a asp-controller="Produto" asp-action="Editar" asp-route-id="@produto.Id"  class="btn btn-primary w-50">Editar</a>
@@ -29,4 +52,21 @@
             }
         </div>
     }
+
+    <nav aria-label="Navegação de páginas">
+        <ul class="pagination justify-content-end mt-5">
+            <li class="page-item @(ViewData["CurrentPage"].ToString() == "1" ? "disabled" : "")">
+                <a class="page-link" href="?page=@((int)ViewData["CurrentPage"] - 1)">Anterior</a>
+            </li>
+            @for (int i = 1; i <= (int)ViewData["TotalPages"]; i++)
+            {
+                <li class="page-item @(ViewData["CurrentPage"].ToString() == i.ToString() ? "active" : "")">
+                    <a class="page-link" href="?page=@i">@i</a>
+                </li>
+            }
+            <li class="page-item @(ViewData["CurrentPage"].ToString() == ViewData["TotalPages"].ToString() ? "disabled" : "")">
+                <a class="page-link" href="?page=@((int)ViewData["CurrentPage"] + 1)">Próximo</a>
+            </li>
+        </ul>
+    </nav>
 </div>

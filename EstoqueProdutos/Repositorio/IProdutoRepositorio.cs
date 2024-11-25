@@ -11,5 +11,8 @@ namespace EstoqueProdutos.Repositorio
         ProdutoModel Adicionar(ProdutoModel produto);
         ProdutoModel Alterar(ProdutoModel produto);
         ProdutoModel Deletar(ProdutoModel produto);
+
+        PagedResult<ProdutoModel> GetPaged(int page, int pageSize);
+        int Count();
     }
 }

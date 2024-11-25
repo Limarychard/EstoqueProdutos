@@ -6,6 +6,7 @@ using EstoqueProdutos.Models;
 using EstoqueProdutos.Repositorio;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
@@ -27,8 +28,9 @@ namespace EstoqueProdutos.Controllers
             _sessao = sessao;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string? NomeProduto = null, int page = 1, int? pageSize = null)
         {
+
             var usuarioLogado = _sessao.BuscarSessaoDoUsuario();
 
             List<ProdutoModel> Produtos;
@@ -41,7 +43,26 @@ namespace EstoqueProdutos.Controllers
                 Produtos = _produtoRepositorio.ListarPorUsuarioId(usuarioLogado.Id);
             }
 
-            return View(Produtos);
+            if (!string.IsNullOrEmpty(NomeProduto))
+                Produtos = Produtos.Where(u => u.Nome.Contains(NomeProduto, StringComparison.OrdinalIgnoreCase)).ToList();
+
+            ViewData["pageSize"] = pageSize;
+
+            int currentPageSize = pageSize ?? 4;
+
+            int totalItems = Produtos.Count;
+
+            var produtosPaginados = Produtos
+                .Skip((page - 1) * currentPageSize)
+                .Take(currentPageSize)
+                .ToList();
+
+            ViewData["NomeProduto"] = NomeProduto;
+            ViewData["CurrentPage"] = page;
+            ViewData["TotalPages"] = (int)Math.Ceiling((double)totalItems / currentPageSize);
+
+            return View(produtosPaginados);
+
         }
 
         public IActionResult ObterImagem(int id)

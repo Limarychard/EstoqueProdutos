@@ -9,11 +9,11 @@
             <label asp-for="ClienteId" for="inputCliente" class="form-label">Cliente</label>
                 <select asp-for="ClienteId" class="form-select" aria-label="Default select example">
                 <option value="" selected>Selecione o cliente</option>
-                @foreach (var cliente in ViewBag.Clientes)
-                {
-                    <option value="@cliente.Value">@cliente.Text</option>
-                }
-            </select>
+                    @foreach (var cliente in ViewBag.Clientes)
+                    {
+                        <option value="@cliente.Value">@cliente.Text</option>
+                    }
+                </select>
             @Html.ValidationMessageFor(x => x.ClienteId)
         </div>
 
