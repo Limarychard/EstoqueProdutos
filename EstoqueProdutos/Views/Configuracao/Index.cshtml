@@ -1,0 +1,81 @@
+﻿@{
+    ViewData["Title"] = "Configurações";
+    Layout = "_Layout";
+}
+
+<div class="container mt-5">
+    <h1 class="mb-4">Configurações</h1>
+
+    <!-- Navegação por Abas -->
+    <ul class="nav nav-tabs" id="configTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="geral-tab" data-bs-toggle="tab" data-bs-target="#geral" type="button" role="tab" aria-controls="geral" aria-selected="true">
+                Geral
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="conta-tab" data-bs-toggle="tab" data-bs-target="#conta" type="button" role="tab" aria-controls="conta" aria-selected="false">
+                Conta
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="preferencias-tab" data-bs-toggle="tab" data-bs-target="#preferencias" type="button" role="tab" aria-controls="preferencias" aria-selected="false">
+                Preferências
+            </button>
+        </li>
+    </ul>
+
+    <!-- Conteúdo das Abas -->
+    <div class="tab-content" id="configTabsContent">
+        <div class="tab-pane fade show active" id="geral" role="tabpanel" aria-labelledby="geral-tab">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Configurações Gerais</h5>
+                    <div class="mb-3">
+                        <label for="siteName" class="form-label">Nome do Site</label>
+                        <input type="text" class="form-control" id="siteName" placeholder="Digite o nome do site">
+                    </div>
+                    <div class="mb-3">
+                        <label for="language" class="form-label">Idioma</label>
+                        <select class="form-select" id="language">
+                            <option value="pt-BR" selected>Português (Brasil)</option>
+                            <option value="en-US">Inglês (EUA)</option>
+                            <option value="es-ES">Espanhol</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="conta" role="tabpanel" aria-labelledby="conta-tab">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Configurações da Conta</h5>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" placeholder="Digite seu email">
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Nova Senha</label>
+                        <input type="password" class="form-control" id="password" placeholder="Digite sua nova senha">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="preferencias" role="tabpanel" aria-labelledby="preferencias-tab">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Preferências</h5>
+                    <div class="mb-3">
+                        <label for="themeSelector" class="form-label">Selecione o Tema</label>
+                        <select id="themeSelector" class="form-select">
+                            <option value="light">Claro</option>
+                            <option value="dark">Escuro</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
