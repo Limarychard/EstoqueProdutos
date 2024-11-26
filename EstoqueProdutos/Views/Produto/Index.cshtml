@@ -37,10 +37,10 @@
                     <div class="card shadow-sm h-100" style="width: 18rem;">
                         <img src="@Url.Action("ObterImagem", "Produto", new { id = produto.Id })" class="card-img-top" alt="Imagem do Produto">
                         <div class="card-body">
-                            <h3 class="card-title">@produto.Nome</h3>
-                            <p class="card-text">Valor: R$@produto.Valor</p>
-                            <p class="card-text">Descrição: @produto.Descricao</p>
-                            <p class="card-text">Quantidade em estoque: @produto.Quantidade</p>
+                            <h3 class="product-title">@produto.Nome</h3>
+                            <p class="product-price">Valor: R$@produto.Valor</p>
+                            <p class="product-description">Descrição: @produto.Descricao</p>
+                            <p class="product-title">Quantidade em estoque: @produto.Quantidade</p>
                         </div>
                         <div class="d-flex gap-2 p-2">
                             <a asp-controller="Produto" asp-action="Editar" asp-route-id="@produto.Id"  class="btn btn-primary w-50">Editar</a>
