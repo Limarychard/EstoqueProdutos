@@ -5,6 +5,22 @@
     ViewData["Title"] = "Login";
 }
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Verifica se o tema está salvo no localStorage
+        const temaSalvo = localStorage.getItem('tema');
+
+        if (temaSalvo) {
+            // Aplica o tema salvo
+            document.documentElement.setAttribute('data-theme', temaSalvo);
+        } else {
+            // Se não houver tema salvo, usa o padrão
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+    });
+</script>
+
+<html data-theme>
 <div class="modal-dialog">
     <div class="modal-content">
         <div class="modal-header">
@@ -47,3 +63,5 @@
         </div>
     </div>
 </div>
+</html>
+

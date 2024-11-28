@@ -55,13 +55,13 @@ else if (TempData["MensagemErro"] != null)
         <a asp-controller="Usuario" asp-action="Criar" class="btn btn-primary">Novo usuário</a>
     </div>
 
-    <table id="usuariosTable" class="table table-white table-bordered table-striped text-center">
+    <table id="usuariosTable" class="table text-center shadow table-hover">
         <thead>
-            <tr class="table-primary">
+            <tr>
                 <th scope="col"></th>
-                <th scope="col">Nome</th>
-                <th scope="col">Login</th>
-                <th scope="col">Email</th>
+                <th scope="col" class="text-start">Nome</th>
+                <th scope="col" class="text-start">Login</th>
+                <th scope="col" class="text-start">Email</th>
                 <th scope="col">Perfil</th>
                 <th scope="col">Data Cadastro</th>
             </tr>
@@ -86,7 +86,7 @@ else if (TempData["MensagemErro"] != null)
                         <td class="align-content-center text-start">@usuario.Nome</td>
                         <td class="align-content-center text-start">@usuario.Login</td>
                         <td class="align-content-center text-start">@usuario.Email</td>
-                        <td class="align-content-center text-start">@(usuario.Perfil == EstoqueProdutos.Enums.PerfilEnum.Admin ? "Admin" : "Padrão" )</td>
+                        <td class="align-content-center">@(usuario.Perfil == EstoqueProdutos.Enums.PerfilEnum.Admin ? "Admin" : "Padrão" )</td>
                         <td class="align-content-center text-center">@usuario.DtInc.ToString("dd/MM/yyyy")</td>
                     </tr>
 

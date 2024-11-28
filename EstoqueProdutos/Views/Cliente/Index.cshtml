@@ -62,13 +62,13 @@ else if (TempData["MensagemErro"] != null)
         <a asp-controller="Cliente" asp-action="Criar" class="btn btn-primary">Novo cliente</a>
     </div>
 
-    <table id="clientesTable" class="table table-white table-bordered table-striped text-center">
+    <table id="clientesTable" class="table text-center shadow table-hover">
         <thead>
-            <tr class="table-primary">
+            <tr>
                 <th scope="col"></th>
-                <th scope="col">Nome</th>
-                <th scope="col">Telefone</th>
-                <th scope="col">CPF</th>
+                <th scope="col" class="text-start">Nome</th>
+                <th scope="col" class="text-start">Telefone</th>
+                <th scope="col" class="text-start">CPF</th>
                 <th scope="col">Bom pagador</th>
                 <th class="align-content-center text-center" scope="col">Dt. Ult. Compra</th>
             </tr>

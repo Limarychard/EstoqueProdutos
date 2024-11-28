@@ -26,6 +26,7 @@ namespace EstoqueProdutos
             builder.Services.AddScoped<IClienteRepositorio, ClienteRepositorio>();
             builder.Services.AddScoped<IProdutoRepositorio, ProdutoRepositorio>();
             builder.Services.AddScoped<IUsuarioRepositorio, UsuarioRepositorio>();
+            builder.Services.AddScoped<IConfiguracaoRepositorio, ConfiguracaoRepositorio>();
             builder.Services.AddScoped<ISessao, Sessao>();
             builder.Services.AddScoped<IEmail, Email>();
 

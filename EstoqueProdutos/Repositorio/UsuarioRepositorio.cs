@@ -86,6 +86,25 @@ namespace EstoqueProdutos.Repositorio
             return usuarioDB;
         }
 
+        public UsuarioModel AlterarEmail(AlterarEmailModel alterarEmailModel)
+        {
+            UsuarioModel usuarioDB = ListarPorId(alterarEmailModel.Id);
+
+            if (usuarioDB == null) throw new Exception("Houve um erro na atualização do e-mail, usuário não encontrado!");
+
+            if (usuarioDB.Email != alterarEmailModel.EmailAtual) throw new Exception("E-mail atual não confere!");
+
+            if (usuarioDB.Email == alterarEmailModel.NovoEmail) throw new Exception("Nova e-mail deve ser diferente do atual!");
+
+            usuarioDB.Email = alterarEmailModel.NovoEmail;
+            usuarioDB.DtAlt = DateTime.Now;
+
+            _bancoContext.Usuarios.Update(usuarioDB);
+            _bancoContext.SaveChanges();
+
+            return usuarioDB;
+        }
+
         public UsuarioModel Deletar(UsuarioModel usuario)
         {
             _bancoContext.Remove(usuario);

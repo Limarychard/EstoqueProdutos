@@ -10,9 +10,11 @@ public class LoginController : Controller
     private ISessao _sessao;
     private readonly IEmail _email;
 
-    public LoginController(IUsuarioRepositorio usuarioRepositorio,
-                           ISessao sessao,
-                           IEmail email)
+    public LoginController(
+        IUsuarioRepositorio usuarioRepositorio,
+        ISessao sessao,
+        IEmail email
+    )
     {
         _usuarioRepositorio = usuarioRepositorio;
         _sessao = sessao;

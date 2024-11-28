@@ -84,11 +84,11 @@ else if (TempData["MensagemErro"] != null)
         <a asp-action="Criar" class="btn btn-primary">Nova venda</a>
     </div>
 
-    <table id="vendasTable" class="table table-white table-bordered table-striped text-center">
+    <table id="vendasTable" class="table text-center shadow table-hover">
         <thead>
-            <tr class="table-primary">
+            <tr class="">
                 <th scope="col"></th>
-                <th scope="col">Cliente</th>
+                <th scope="col" class="text-start">Cliente</th>
                 <th scope="col">Produtos</th>
                 <th scope="col">Valor</th>
                 <th scope="col">Forma de Pagamento</th>
@@ -183,7 +183,7 @@ else if (TempData["MensagemErro"] != null)
                                 </div>
                             </div>
                         </td>
-                        <td class="align-content-center text-start">R$ @venda.Valor</td>
+                        <td class="align-content-center">R$ @venda.Valor</td>
                         <td class="align-content-center text-center">@FormaDePagamentoDisplay(venda.FormaDePagamento)</td>
                         <td class="align-content-center text-center">
                             <i class="@(venda.Parcelado ? "bi bi-hand-thumbs-up-fill text-success" : "bi bi-hand-thumbs-down-fill text-danger")"></i>

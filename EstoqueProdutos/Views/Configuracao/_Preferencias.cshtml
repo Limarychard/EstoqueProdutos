@@ -1,0 +1,17 @@
+﻿@model ConfiguracaoModal;
+
+<form asp-action="SalvarPreferencias" method="post">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title text-center">Preferências</h5>
+            <div class="mb-3">
+                <label asp-for="@Model.TemaId" class="form-label">Selecione o Tema</label>
+                <select asp-for="@Model.TemaId" id="themeSelector" class="form-select">
+                    <option value="0">Claro</option>
+                    <option value="1">Escuro</option>
+                </select>
+            </div> 
+            <button id="alterar-tema" type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+    </div>
+</form>

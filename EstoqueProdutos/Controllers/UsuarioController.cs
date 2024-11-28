@@ -14,10 +14,15 @@ namespace EstoqueProdutos.Controllers
     public class UsuarioController : Controller
     {
         readonly private IUsuarioRepositorio _usuarioRepositorio;
+        readonly private IConfiguracaoRepositorio _configuracaoRepositorio;
 
-        public UsuarioController(IUsuarioRepositorio usuarioRepositorio)
+        public UsuarioController(
+            IUsuarioRepositorio usuarioRepositorio,
+            IConfiguracaoRepositorio configuracaoRepositorio
+            )
         {
             _usuarioRepositorio = usuarioRepositorio;
+            _configuracaoRepositorio = configuracaoRepositorio;
         }
 
         public IActionResult Index(string? Nome = null, string? Login = null, string? Email = null, DateTime? DataCriacaoInicio = null, DateTime? DataCriacaoFim = null)
@@ -86,8 +91,15 @@ namespace EstoqueProdutos.Controllers
                 if (ModelState.IsValid)
                 {
                     usuario.SetSenhaHash();
-
                     _usuarioRepositorio.Adicionar(usuario);
+
+                    _configuracaoRepositorio.GerarConfiguracaoPadrao(new ConfiguracaoModal
+                    {
+                        UsuarioId = usuario.Id,
+                        TemaId = 0,
+                        FonteId = 0,
+                        Usuario = usuario
+                    });
                     TempData["MensagemSucesso"] = "Usuário cadastrado com sucesso!";
                     return RedirectToAction("Index");
                 }

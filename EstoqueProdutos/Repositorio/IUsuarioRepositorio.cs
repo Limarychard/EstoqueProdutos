@@ -11,7 +11,8 @@ namespace EstoqueProdutos.Repositorio
         List<UsuarioModel> ListarTodos();
         UsuarioModel Adicionar(UsuarioModel usuario);
         UsuarioModel Alterar(UsuarioModel usuario);
-        UsuarioModel Deletar(UsuarioModel usuario);
         UsuarioModel AlterarSenha(AlterarSenhaModel usuario);
+        UsuarioModel AlterarEmail(AlterarEmailModel usuario);
+        UsuarioModel Deletar(UsuarioModel usuario);
     }
 }
