@@ -5,6 +5,7 @@ using EstoqueProdutos.Repositorio;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
 namespace EstoqueProdutos.Controllers
 {
@@ -31,22 +32,42 @@ namespace EstoqueProdutos.Controllers
             ViewData["AbaAtiva"] = aba;
             UsuarioModel usuarioLogado = _sessao.BuscarSessaoDoUsuario();
             var configuracao = _configuracaoRepositorio.BuscarConfiguracaoPorUsuarioId(usuarioLogado.Id);
+            var viewModel = new ConfiguracaoViewModel();
 
-            var viewModel = new ConfiguracaoViewModel
+            if (configuracao == null)
             {
-                AlterarSenha = new AlterarSenhaModel(),
-                AlterarEmail = new AlterarEmailModel(),
-                Configuracao = new ConfiguracaoModal
+                viewModel = new ConfiguracaoViewModel
                 {
-                    Id = configuracao.Id,
-                    FonteId = configuracao.FonteId,
-                    TemaId = configuracao.TemaId,
-                    Usuario = configuracao.Usuario,
-                    UsuarioId = configuracao.UsuarioId
-                }
-            };
+                    AlterarSenha = new AlterarSenhaModel(),
+                    AlterarEmail = new AlterarEmailModel(),
+                    Configuracao = _configuracaoRepositorio.GerarConfiguracaoPadrao(new ConfiguracaoModal
+                    {
+                        FonteId = 0,
+                        TemaId = 0,
+                        UsuarioId = usuarioLogado.Id
+                    })
+                };
+            } else
+            {
+                viewModel = new ConfiguracaoViewModel
+                {
+                    AlterarSenha = new AlterarSenhaModel(),
+                    AlterarEmail = new AlterarEmailModel(),
+                    Configuracao = new ConfiguracaoModal
+                    {
+                        Id = configuracao.Id,
+                        FonteId = configuracao.FonteId,
+                        TemaId = configuracao.TemaId,
+                        Usuario = configuracao.Usuario,
+                        UsuarioId = configuracao.UsuarioId
+                    }
+                };
+
+
+            }
 
             return View(viewModel);
+
         }
 
         [HttpPost]
