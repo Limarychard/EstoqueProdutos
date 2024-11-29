@@ -194,6 +194,10 @@ namespace EstoqueProdutos.Controllers
 
                     _vendaRepositorio.Adicionar(venda, produtosVenda);
 
+                    venda.Cliente.DtUltCompra = DateTime.Now;
+
+                    _clienteRepositorio.Alterar(venda.Cliente);
+
                     TempData["MensagemSucesso"] = "Parabéns, você fez uma nova venda!";
                     return RedirectToAction("Index");
                 }
