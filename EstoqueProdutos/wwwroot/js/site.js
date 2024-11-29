@@ -72,6 +72,8 @@ $('.close-alert').click(function (e) {
 
 document.getElementById('open_btn').addEventListener('click', function () {
     document.getElementById('sidebar').classList.toggle('open-sidebar');
+
+    content.classList.toggle("with-sidebar");
 });
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -148,4 +150,45 @@ function mudarTema(tema) {
         });
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+    const menuState = localStorage.getItem("menuState");
+    const sidebar = document.getElementById("sidebar");
+    const content = document.getElementById("contentMain");
 
+    if (sidebar && content) {
+        if (menuState === "closed") {
+            sidebar.classList.remove("open-sidebar");
+            sidebar.setAttribute("data-state", "closed");
+            content.classList.remove("with-sidebar");
+        } else {
+            sidebar.classList.add("open-sidebar");
+            sidebar.setAttribute("data-state", "open");
+            content.classList.add("with-sidebar");
+        }
+    }
+
+    const menuButton = document.getElementById("open_btn");
+    if (menuButton) {
+        menuButton.addEventListener("click", toggleMenuState);
+    }
+});
+
+function toggleMenuState() {
+    const sidebar = document.getElementById("sidebar");
+    const content = document.getElementById("contentMain");
+    const currentState = sidebar.getAttribute("data-state");
+
+    if (currentState === "open") {
+        sidebar.classList.remove("open-sidebar");
+        sidebar.setAttribute("data-state", "closed");
+        content.classList.remove("with-sidebar");
+        localStorage.setItem("menuState", "closed");
+        localStorage.setItem("contentState", "without-sidebar");
+    } else {
+        sidebar.classList.add("open-sidebar");
+        sidebar.setAttribute("data-state", "open");
+        content.classList.add("with-sidebar");
+        localStorage.setItem("menuState", "open");
+        localStorage.setItem("contentState", "without-sidebar");
+    }
+}

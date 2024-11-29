@@ -122,6 +122,10 @@ body {
     color: #e3e9f7;
 }
 
+.side-item.active span {
+    color: #e3e9f7;
+}
+
 .side-item:hover:not(.active),
 #logout_btn:hover {
 background-color: #e0e0e0;
@@ -157,6 +161,14 @@ color: #0a0a0a;
 
 #sidebar.open-sidebar {
     min-width: 15%;
+}
+
+#contentMain {
+    transition: margin-left 0.5s ease;
+}
+
+#contentMain.with-sidebar {
+    margin-left: 5%;
 }
 
 #sidebar.open-sidebar .item-description {
