@@ -60,7 +60,7 @@ else if (TempData["MensagemErro"] != null)
                             <p class="product-title">Quantidade em estoque: @produto.Quantidade</p>
                         </div>
                         <div class="d-flex gap-2 p-2">
-                            <a asp-controller="Produto" asp-action="Editar" asp-route-id="@produto.Id"  class="btn btn-primary w-50">Editar</a>s
+                            <a asp-controller="Produto" asp-action="Editar" asp-route-id="@produto.Id"  class="btn btn-primary w-50">Editar</a>
                             <a role="button" asp-route-id="@produto.Id" class="btn btn-danger w-50" data-bs-toggle="modal" data-bs-target="#exampleModal-@produto.Id">Apagar</a>
                         </div>
                     </div>
