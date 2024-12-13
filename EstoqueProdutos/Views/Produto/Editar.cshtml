@@ -2,7 +2,7 @@
 
 <div class="container border">
 
-    <h1>Editar o cliente</h1>
+    <h1>Editar o produto</h1>
 
     <form method="post" asp-controller="Produto" asp-action="Editar" enctype="multipart/form-data" class="row g-3">
         <div class="col-12 text-start pt-3">
@@ -10,6 +10,11 @@
             <div class="custom-file-upload">
                 <input asp-for="Foto" type="file" id="inputFoto" name="Foto" />
                 <span class="upload-text">Selecione uma imagem do seu produto...</span>
+
+                @if (!string.IsNullOrEmpty(Model.Foto.ToString()))
+                {
+                    <img src="@Url.Action("ObterImagem", "Produto", new { id = Model.Id })" class="card-img-top" alt="Imagem do Produto">
+                }
             </div>
         </div>
         <div class="col-md-12">

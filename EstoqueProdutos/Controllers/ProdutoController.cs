@@ -105,14 +105,14 @@ namespace EstoqueProdutos.Controllers
                     produto.UsuarioId = usuarioLogado.Id;
 
                     _produtoRepositorio.Adicionar(produto);
-                    TempData["MensagemSucesso"] = "Cliente cadastrado com sucesso!";
+                    TempData["MensagemSucesso"] = "Produto cadastrado com sucesso!";
                     return RedirectToAction("Index");
                 }
                 return View();
             }
             catch (Exception err)
             {
-                TempData["MensagemErro"] = $"Ops, não conseguimos criar seu novo cliente, detalhe do erro: {err.Message}";
+                TempData["MensagemErro"] = $"Ops, não conseguimos criar seu novo produto, detalhe do erro: {err.Message}";
                 return RedirectToAction("Index");
             }
         }
@@ -121,11 +121,12 @@ namespace EstoqueProdutos.Controllers
         public IActionResult Editar(int id)
         {
             ProdutoModel produto = _produtoRepositorio.ListarPorId(id);
+
             return View(produto);
         }
 
         [HttpPost]
-        public IActionResult Editar(ProdutoModel produto, IFormFile Foto)
+        public IActionResult Editar(ProdutoModel produto, IFormFile? Foto)
         {
             try
             {
