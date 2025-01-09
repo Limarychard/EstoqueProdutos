@@ -15,9 +15,8 @@ namespace EstoqueProdutos.Repositorio
 
         public VendaModel ListarPorId(int id)
         {
-            // Inclui a coleção de produtos da venda
             return _bancoContext.Vendas
-                .Include(v => v.ProdutoVenda) // Inclui os produtos relacionados à venda
+                .Include(v => v.ProdutoVenda)
                 .FirstOrDefault(x => x.Id == id);
         }
 
@@ -78,6 +77,13 @@ namespace EstoqueProdutos.Repositorio
         public ProdutoVendaModel ListarProdutoVendaPorId(int id)
         {
             return _bancoContext.ProdutoVenda.FirstOrDefault(x => x.Id == id);
+        }
+
+        public ProdutoVendaModel AdicionarProdutoVenda(ProdutoVendaModel produtoVenda)
+        {
+            _bancoContext.ProdutoVenda.Add(produtoVenda);
+            _bancoContext.SaveChanges();
+            return produtoVenda;
         }
 
         public ProdutoVendaModel AlterarProdutoVenda(ProdutoVendaModel produtoVenda)

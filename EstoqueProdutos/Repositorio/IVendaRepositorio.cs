@@ -12,6 +12,7 @@ namespace EstoqueProdutos.Repositorio
         VendaModel Deletar(VendaModel venda);
 
         ProdutoVendaModel ListarProdutoVendaPorId(int id);
+        ProdutoVendaModel AdicionarProdutoVenda(ProdutoVendaModel produtoVenda);
         ProdutoVendaModel AlterarProdutoVenda(ProdutoVendaModel produtoVenda);
         ProdutoVendaModel DeletarProduto(ProdutoVendaModel produtoVendaModel);
     }

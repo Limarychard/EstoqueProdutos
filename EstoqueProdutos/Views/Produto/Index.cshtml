@@ -1,5 +1,7 @@
 ﻿@model List<ProdutoModel>;
 
+<link rel="stylesheet" href="~/css/produto.css" asp-append-version="true" />
+
 @if (TempData["MensagemSucesso"] != null)
 {
     <div class="alert alert-success" role="alert">
@@ -15,33 +17,32 @@ else if (TempData["MensagemErro"] != null)
     </div>
 }
 
-<div class="container">
-
-    <div class="row align-items-center mb-3">
-        <div class="col-12 mb-2">
-            <a asp-action="Criar" class="btn btn-primary">Novo produto</a>
+<div class="row align-items-center mb-3">
+    <form asp-controller="Produto" method="get" asp-action="Index" class="d-flex w-100 align-items-center">
+        <div>
+            <select class="form-select form-control" id="pageSize" name="pageSize" value="@ViewData["pageSize"]">
+                <option value="4">4</option>
+                <option value="8">8</option>
+                <option value="16">16</option>
+                <option value="40">40</option>
+                <option value="400">400</option>
+            </select>
         </div>
 
-        <form asp-controller="Produto" method="get" asp-action="Index" class="d-flex w-100 align-items-center">
-            <div>
-                <select class="form-select form-control" id="pageSize" name="pageSize" value="@ViewData["pageSize"]">
-                    <option value="4">4</option>
-                    <option value="8">8</option>
-                    <option value="16">16</option>
-                    <option value="40">40</option>
-                    <option value="400">400</option>
-                </select>
+        <div class="mx-auto w-75">
+            <div class="input-group">
+                <input type="text" name="NomeProduto" class="form-control" placeholder="Pesquisar por nome..." value="@ViewData["NomeProduto"]" />
+                <button type="submit" class="btn btn-primary">Pesquisar</button>
             </div>
+        </div>
+    </form>
 
-            <div class="mx-auto w-75">
-                <div class="input-group">
-                    <input type="text" name="NomeProduto" class="form-control" placeholder="Pesquisar por nome..." value="@ViewData["NomeProduto"]" />
-                    <button type="submit" class="btn btn-primary">Pesquisar</button>
-                </div>
-            </div>
-        </form>
+    <div class="col-12 mb-2 mt-2">
+        <a asp-action="Criar" class="btn btn-primary">Novo produto</a>
     </div>
+</div>
 
+<div class="container p-2">
 
     @if(Model != null)
     {
@@ -55,9 +56,19 @@ else if (TempData["MensagemErro"] != null)
                         </a>
                         <div class="card-body">
                             <h3 class="product-title">@produto.Nome</h3>
-                            <p class="product-price">Valor: R$@produto.Valor</p>
+                            <p class="product-price">Valor De Custo: <span class="text-danger">R$@produto.ValorDeCusto</span></p>
+                            <p class="product-price">Valor De Venda: <span class="text-success">R$@produto.ValorDeVenda</span></p>
                             <p class="product-description">Descrição: @produto.Descricao</p>
                             <p class="product-title">Quantidade em estoque: @produto.Quantidade</p>
+
+                            @if (!(String.IsNullOrEmpty(produto.Codigo)))
+                            {
+                                <p class="product-description">Descrição: @produto.Codigo</p>
+                            } else
+                            {
+                                <p class="product-description"> </p>
+                            }
+
                         </div>
                         <div class="d-flex gap-2 p-2">
                             <a asp-controller="Produto" asp-action="Editar" asp-route-id="@produto.Id"  class="btn btn-primary w-50">Editar</a>

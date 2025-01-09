@@ -13,7 +13,7 @@ namespace EstoqueProdutos.Models
 
         [Required(ErrorMessage = "O campo é obrigatório")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
-        public double? Valor { get; set; }
+        public decimal? Valor { get; set; }
 
         public ClienteModel Cliente { get; set; }
 

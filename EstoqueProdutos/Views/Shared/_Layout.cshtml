@@ -16,7 +16,7 @@
     
 <body class="d-flex vh-100">
     @await Component.InvokeAsync("Menu")
-    <div class="container">
+    <div class="container" style="background-color:transparent;">
         <main role="main" class="pb-3" id="contentMain">
             @RenderBody()
         </main>
@@ -26,6 +26,9 @@
 
     <!-- Carregar Select2 após o jQuery -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+    <!-- Carregar o mask após o Select2 -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery-mask-plugin@1.14.16/dist/jquery.mask.min.js"></script>
 
     <!-- Carregar outros scripts -->
     <script src="~/js/site.js" asp-append-version="true"></script>

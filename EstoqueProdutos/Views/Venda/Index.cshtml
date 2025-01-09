@@ -1,6 +1,7 @@
 ﻿@using System.ComponentModel.DataAnnotations
 @using System.Reflection
 @using EstoqueProdutos.Enums
+@using EstoqueProdutos.Utils
 
 @model List<VendaModel>;
 
@@ -76,13 +77,13 @@ else if (TempData["MensagemErro"] != null)
             <a asp-controller="Venda" asp-action="Index" class="btn btn-secondary w-100">Limpar</a>
         </div>
     </form>
-</div>
 
-<div class="container">
-
-    <div class="justify-content-between align-items-center mb-3">
+    <div class="justify-content-between align-items-center mb-3 mt-3">
         <a asp-action="Criar" class="btn btn-primary">Nova venda</a>
     </div>
+</div>
+
+<div class="container p-2">
 
     <table id="vendasTable" class="table text-center shadow table-hover">
         <thead>
@@ -133,8 +134,10 @@ else if (TempData["MensagemErro"] != null)
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-                                            <!-- Conteúdo do modal -->
-                                            <table id="ProdutosVendasTable" class="table table-bordered">
+                                            <div class="d-flex justify-content-start mb-5">
+                                                <a class="btn btn-primary" asp-controller="Venda" asp-route-vendaId="@venda.Id" asp-action="CriarProdutoVenda"> Adicionar produto</a>
+                                            </div>                                            
+                                            <table class="table table-bordered ProdutosVendasTable">
                                                 <thead>
                                                     <tr>
                                                         <th scope="col"></th>
@@ -170,7 +173,7 @@ else if (TempData["MensagemErro"] != null)
                                                             </td>
                                                             <td>@produto.NomeProduto</td>
                                                             <td>@produto.Quantidade</td>
-                                                            <td>R$ @produto.ValorProduto</td>
+                                                            <td>@FormataUtils.FormatValor(produto.ValorProduto)</td>
                                                         </tr>
                                                     }
                                                 </tbody>
@@ -183,7 +186,7 @@ else if (TempData["MensagemErro"] != null)
                                 </div>
                             </div>
                         </td>
-                        <td class="align-content-center">R$ @venda.Valor</td>
+                        <td class="align-content-center">@FormataUtils.FormatValor(venda.Valor)</td>
                         <td class="align-content-center text-center">@FormaDePagamentoDisplay(venda.FormaDePagamento)</td>
                         <td class="align-content-center text-center">
                             <i class="@(venda.Parcelado ? "bi bi-hand-thumbs-up-fill text-success" : "bi bi-hand-thumbs-down-fill text-danger")"></i>

@@ -34,7 +34,7 @@
 
         <div class="col-12">
             <label asp-for="Valor" for="inputValor" class="form-label">Valor Total</label>
-            <input asp-for="Valor" type="text" class="form-control" id="inputValor" value="@Model?.Valor" />
+            <input asp-for="Valor" type="text" class="form-control money" id="inputValor" value="@Model?.Valor" />
             @Html.ValidationMessageFor(x => x.Valor)
         </div>
         <div class="col-12">
@@ -101,7 +101,7 @@
                             value: 1,
                             min: 1,
                             class: 'form-control quantidadeProduto',
-                            'data-preco': produto.Valor
+                            'data-preco': produto.ValorDeVenda
                         });
 
                         var label = $('<label>').text("Quantidade para " + produto.Nome);

@@ -53,9 +53,11 @@ namespace EstoqueProdutos.Repositorio
             }
 
             produtoExistente.Nome = produto.Nome;
-            produtoExistente.Valor = produto.Valor;
+            produtoExistente.ValorDeVenda = produto.ValorDeVenda;
+            produtoExistente.ValorDeCusto = produto.ValorDeCusto;
             produtoExistente.Quantidade = produto.Quantidade;
             produtoExistente.Descricao = produto.Descricao;
+            produtoExistente.Codigo = produto.Codigo;
             produtoExistente.Foto = produto.Foto;
 
             _bancoContext.SaveChanges();

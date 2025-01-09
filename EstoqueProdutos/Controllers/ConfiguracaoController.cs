@@ -44,7 +44,8 @@ namespace EstoqueProdutos.Controllers
                     {
                         FonteId = 0,
                         TemaId = 0,
-                        UsuarioId = usuarioLogado.Id
+                        PesquisarProduto = 0,
+                        UsuarioId = usuarioLogado.Id,
                     })
                 };
             } else
@@ -58,6 +59,7 @@ namespace EstoqueProdutos.Controllers
                         Id = configuracao.Id,
                         FonteId = configuracao.FonteId,
                         TemaId = configuracao.TemaId,
+                        PesquisarProduto = configuracao.PesquisarProduto,
                         Usuario = configuracao.Usuario,
                         UsuarioId = configuracao.UsuarioId
                     }
@@ -146,6 +148,7 @@ namespace EstoqueProdutos.Controllers
                     {
                         configuracaoExistente.TemaId = configuracao.TemaId;
                         configuracaoExistente.FonteId = configuracao.FonteId;
+                        configuracaoExistente.PesquisarProduto = configuracao.PesquisarProduto;
 
                         _configuracaoRepositorio.AtualizarConfiguracao(configuracaoExistente);
                     }
@@ -183,7 +186,8 @@ namespace EstoqueProdutos.Controllers
                 if (configuracao != null)
                 {
                     var tema = configuracao.TemaId == 1 ? "dark" : "light";
-                    return Json(new { tema });
+                    var pesquisarProduto = configuracao.PesquisarProduto == 1 ? "Codigo" : "Nome";
+                    return Json(new { tema, pesquisarProduto });
                 }
 
                 return Json(new { tema = "light" });

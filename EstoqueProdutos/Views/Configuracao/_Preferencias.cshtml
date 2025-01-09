@@ -10,7 +10,15 @@
                     <option value="0">Claro</option>
                     <option value="1">Escuro</option>
                 </select>
-            </div> 
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="@Model.PesquisarProduto" class="form-label">Como você deseja pesquisar o produto?</label>
+                <select asp-for="@Model.PesquisarProduto" id="produtoSelector" class="form-select">
+                    <option value="0">Nome</option>
+                    <option value="1">Código</option>
+                </select>
+            </div>
             <button id="alterar-tema" type="submit" class="btn btn-primary">Salvar</button>
         </div>
     </div>

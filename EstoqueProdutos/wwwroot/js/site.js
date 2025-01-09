@@ -20,7 +20,7 @@ $(document).ready(function () {
     getDatatable('#usuariosTable');
     getDatatable('#clientesTable');
     getDatatable('#vendasTable');
-    getDatatable('#ProdutosVendasTable', true)
+    getDatatable('.ProdutosVendasTable', true)
 });
 
 function getDatatable(id, enableSearching = false) {
@@ -52,18 +52,6 @@ function getDatatable(id, enableSearching = false) {
         }
     })
 }
-
-$(document).ready(function () {
-    $('#inputValor').inputmask('decimal', {
-        radixPoint: ',',
-        groupSeparator: '.',
-        autoGroup: true,
-        digits: 2,
-        digitsOptional: false,
-        rightAlign: false,
-        removeMaskOnSubmit: true
-    });
-});
 
 $('.close-alert').click(function (e) {
     e.preventDefault();

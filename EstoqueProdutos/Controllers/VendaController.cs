@@ -7,6 +7,7 @@ using EstoqueProdutos.Repositorio;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -22,6 +23,7 @@ namespace EstoqueProdutos.Controllers
         readonly private IProdutoRepositorio _produtoRepositorio;
         readonly private IUsuarioRepositorio _usuarioRepositorio;
         readonly private ISessao _sessao;
+        readonly private IConfiguracaoRepositorio _configuracaoRepositorio;
 
 
         public VendaController(
@@ -29,7 +31,8 @@ namespace EstoqueProdutos.Controllers
             IClienteRepositorio clienteRepositorio,
             IProdutoRepositorio produtoRepositorio,
             IUsuarioRepositorio usuarioRepositorio,
-            ISessao sessao
+            ISessao sessao,
+            IConfiguracaoRepositorio configuracaoRepositorio
             )
         {
             _vendaRepositorio = vendaRepositorio;
@@ -37,6 +40,7 @@ namespace EstoqueProdutos.Controllers
             _produtoRepositorio = produtoRepositorio;
             _usuarioRepositorio = usuarioRepositorio;
             _sessao = sessao;
+            _configuracaoRepositorio = configuracaoRepositorio;
 
         }
 
@@ -121,8 +125,11 @@ namespace EstoqueProdutos.Controllers
             var usuarioLogado = _sessao.BuscarSessaoDoUsuario();
 
             var produtos = _produtoRepositorio.ListarPorUsuarioId(usuarioLogado.Id);
+            var configuracaoDoUsuario = _configuracaoRepositorio.BuscarConfiguracaoPorUsuarioId(usuarioLogado.Id);
 
-            ViewBag.Produtos = new SelectList(produtos, "Id", "Nome");
+            var displayField = configuracaoDoUsuario.PesquisarProduto == 1 ? "Codigo" : "Nome";
+
+            ViewBag.Produtos = new SelectList(_produtoRepositorio.ListarPorUsuarioId(usuarioLogado.Id), "Id", displayField);
             ViewBag.ProdutosJson = JsonConvert.SerializeObject(produtos);
 
             ViewBag.Clientes = new SelectList(_clienteRepositorio.ListarPorUsuarioId(usuarioLogado.Id), "Id", "Nome");
@@ -142,9 +149,14 @@ namespace EstoqueProdutos.Controllers
             try
             {
                 var usuarioLogado = _sessao.BuscarSessaoDoUsuario();
+                var configuracaoDoUsuario = _configuracaoRepositorio.BuscarConfiguracaoPorUsuarioId(usuarioLogado.Id);
 
                 ViewBag.Clientes = new SelectList(_clienteRepositorio.ListarPorUsuarioId(usuarioLogado.Id), "Id", "Nome");
-                ViewBag.Produtos = new SelectList(_produtoRepositorio.ListarPorUsuarioId(usuarioLogado.Id), "Id", "Nome");
+
+                var displayField = configuracaoDoUsuario.PesquisarProduto == 1 ? "Codigo" : "Nome";
+
+                ViewBag.Produtos = new SelectList(_produtoRepositorio.ListarPorUsuarioId(usuarioLogado.Id), "Id", displayField);
+
                 ViewBag.FormasDePagamento = ObterFormasDePagamento();
 
                 venda.Cliente = _clienteRepositorio.ListarPorId(venda.ClienteId);
@@ -184,11 +196,11 @@ namespace EstoqueProdutos.Controllers
                             ProdutoId = venda.ProdutoVendaId[i],
                             NomeProduto = produto.Nome,
                             Quantidade = quantidadesProduto[i],
-                            ValorProduto = produto.Valor
+                            ValorProduto = produto.ValorDeVenda
                         });
 
 
-                        var valorTotal = produto.Valor * quantidadesProduto[i];
+                        var valorTotal = produto.ValorDeVenda * quantidadesProduto[i];
                         venda.Valor += valorTotal;
                     }
 
@@ -277,6 +289,74 @@ namespace EstoqueProdutos.Controllers
         {
             _vendaRepositorio.Deletar(venda);
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public IActionResult CriarProdutoVenda(int vendaId, string NomeProduto)
+        {
+            var usuarioLogado = _sessao.BuscarSessaoDoUsuario();
+            var configuracaoDoUsuario = _configuracaoRepositorio.BuscarConfiguracaoPorUsuarioId(usuarioLogado.Id);
+
+            var displayField = configuracaoDoUsuario.PesquisarProduto == 1 ? "Codigo" : "Nome";
+
+            ViewBag.Produtos = new SelectList(_produtoRepositorio.ListarPorUsuarioId(usuarioLogado.Id), "Id", displayField)
+                .Prepend(new SelectListItem { Text = "Selecione um produto", Value = "" });
+
+            ViewBag.FormasDePagamento = ObterFormasDePagamento();
+
+            ViewBag.VendaId = vendaId;
+            ViewBag.NomeProduto = NomeProduto;
+
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult CriarProdutoVenda(ProdutoVendaModel produtoVenda, int vendaId)
+        {
+            try
+            {
+                var usuarioLogado = _sessao.BuscarSessaoDoUsuario();
+                var configuracaoDoUsuario = _configuracaoRepositorio.BuscarConfiguracaoPorUsuarioId(usuarioLogado.Id);
+
+                var displayField = configuracaoDoUsuario.PesquisarProduto == 1 ? "Codigo" : "Nome";
+                ViewBag.Produtos = new SelectList(_produtoRepositorio.ListarPorUsuarioId(usuarioLogado.Id), "Id", displayField);
+
+                ModelState.Remove("Venda");
+                ModelState.Remove("Produto");
+
+                if (ModelState.IsValid)
+                {
+                    var produto = _produtoRepositorio.ListarPorId(produtoVenda.ProdutoId);
+                    var venda = _vendaRepositorio.ListarPorId(vendaId);
+
+                    if (produto == null || produto.Quantidade < produto.Quantidade)
+                    {
+                        TempData["MensagemErro"] = $"Estoque insuficiente para o produto {produtoVenda.NomeProduto}.";
+                        return RedirectToAction("Index");
+                    }
+
+                    // Alterando a quantidade de produto no ProdutoModel
+                    produto.Quantidade = -produtoVenda.Quantidade;
+                    _produtoRepositorio.Alterar(produto);
+
+                    // Alterando o valor total da minha venda
+                    var valorTotal = produtoVenda.ValorProduto * produtoVenda.Quantidade;
+                    venda.Valor += valorTotal;
+                    _vendaRepositorio.Alterar(venda);
+
+
+                    // Adicionando o produto
+                    _vendaRepositorio.AdicionarProdutoVenda(produtoVenda);
+
+                    TempData["MensagemSucesso"] = $"O {produtoVenda.NomeProduto} foi adicionado a venda!";
+                }
+
+                return RedirectToAction("Index");
+            } 
+            catch(Exception err){
+                TempData["MensagemErro"] = $"Ops, não conseguimos adicionar o Produto à sua venda. Detalhes do erro: {err.Message}";
+                return RedirectToAction("Index");
+            }
         }
 
         [HttpGet]

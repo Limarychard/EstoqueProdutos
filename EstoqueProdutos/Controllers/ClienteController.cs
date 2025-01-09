@@ -146,5 +146,12 @@ namespace EstoqueProdutos.Controllers
             _clienteRepositorio.Deletar(cliente);
             return RedirectToAction("Index");
         }
+
+        [HttpGet]
+        public IActionResult Enderecos(int id)
+        {
+            ClienteModel cliente = _clienteRepositorio.ListarPorId(id);
+            return View(cliente);
+        }
     }
 }
