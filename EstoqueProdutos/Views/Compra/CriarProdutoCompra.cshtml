@@ -1,0 +1,52 @@
+﻿@model ProdutoCompraModel;
+@{
+    ViewBag.Title = "Criar Produto";
+}
+
+<link rel="stylesheet" href="~/css/produto.css" asp-append-version="true" />
+
+<h2>Criar Produto</h2>
+
+<form method="post">
+    <input type="hidden" name="CompraId" value="@ViewBag.CompraId" />
+    <input type="hidden" id="NomeProduto" name="NomeProduto" />
+
+    <div class="mb-3">
+        <label asp-for="@Model.ProdutoId">
+            Selecione um produto:
+        </label>
+        <select asp-for="ProdutoId" asp-items="ViewBag.Produtos" id="produtoSelect2" class="form-select select2"></select>
+        @Html.ValidationMessageFor(x => x.ProdutoId)
+    </div>
+    <div class="mb-3">
+        <label for="Quantidade" class="form-label">Quantidade</label>
+        <input type="number" class="form-control" id="Quantidade" name="Quantidade" required />
+    </div>
+    <div class="mb-3">
+        <label for="ValorProduto" class="form-label">Valor</label>
+        <input type="number" class="form-control money" id="ValorProduto" name="ValorProduto" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Criar Produto</button>
+</form>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Inicialize o select2
+            $('#produtoSelect2').select2({
+                width: '100%'
+            });
+
+            // Atualize o campo NomeProduto ao selecionar um produto
+            $('#produtoSelect2').on('change', function () {
+                // Obter o texto do item selecionado
+                const nomeProduto = $(this).find('option:selected').text();
+
+                // Atribuir o valor ao campo oculto
+                $('#NomeProduto').val(nomeProduto);
+
+                console.log("Nome do Produto Selecionado:", nomeProduto);
+            });
+        });
+    </script>
+}

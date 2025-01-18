@@ -20,7 +20,9 @@ $(document).ready(function () {
     getDatatable('#usuariosTable');
     getDatatable('#clientesTable');
     getDatatable('#vendasTable');
-    getDatatable('.ProdutosVendasTable', true)
+    getDatatable('#comprasTable');
+    getDatatable('#ProdutosVendaTable', true);
+    getDatatable('#ProdutosCompraTable', true);
 });
 
 function getDatatable(id, enableSearching = false) {

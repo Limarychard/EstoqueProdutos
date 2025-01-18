@@ -1,20 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace EstoqueProdutos.Models
 {
-    public class ClienteModel
+    public class FornecedorModel
     {
-        [Column("ID_CLIENTE")]
+
+        [Column("ID_FORNECEDOR")]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "O nome do cliente é obrigatório")]
-        [Column("NOME_CLIENTE")]
+        [Required(ErrorMessage = "O nome do fornecedor é obrigatório")]
+        [Column("NOME_FORNECEDOR")]
         public string Nome { get; set; }
 
         [ModelBinder(BinderType = typeof(LongBinder))]
-        [Required(ErrorMessage = "O telefone do cliente é obrigatório")]
+        [Required(ErrorMessage = "O telefone do fornecedor é obrigatório")]
         [Column("TELEFONE")]
         public long Telefone { get; set; }
 
@@ -22,27 +23,27 @@ namespace EstoqueProdutos.Models
         [Column("CPF_CNPJ")]
         public long? CPF { get; set; }
 
-        [Required(ErrorMessage = "O CEP do cliente é obrigatório")]
+        [Required(ErrorMessage = "O CEP do fornecedor é obrigatório")]
         [Column("CEP")]
         public string CEP { get; set; }
 
-        [Required(ErrorMessage = "O Estado do cliente é obrigatório")]
+        [Required(ErrorMessage = "O Estado do fornecedor é obrigatório")]
         [Column("ESTADO")]
         public string Estado { get; set; }
 
-        [Required(ErrorMessage = "A Cidade do cliente é obrigatório")]
+        [Required(ErrorMessage = "A Cidade do fornecedor é obrigatório")]
         [Column("CIDADE")]
         public string Cidade { get; set; }
 
-        [Required(ErrorMessage = "O Bairro do cliente é obrigatório")]
+        [Required(ErrorMessage = "O Bairro do fornecedor é obrigatório")]
         [Column("BAIRRO")]
         public string Bairro { get; set; }
 
-        [Required(ErrorMessage = "A Rua do cliente é obrigatório")]
+        [Required(ErrorMessage = "A Rua do fornecedor é obrigatório")]
         [Column("RUA")]
         public string Rua { get; set; }
 
-        [Required(ErrorMessage = "O número do endereço do cliente é obrigatório")]
+        [Required(ErrorMessage = "O número do endereço do fornecedor é obrigatório")]
         [Column("NUMERO_ENDERECO")]
         public string Numero { get; set; }
 
@@ -51,9 +52,6 @@ namespace EstoqueProdutos.Models
 
         [Column("COMPLEMENTO")]
         public string? Complemento { get; set; }
-
-        [Column("BOM_PAGADOR")]
-        public bool BomPagador { get; set; }
 
         [Column("DT_ULT_COMPRA")]
         public DateTime? DtUltCompra { get; set; }
@@ -68,5 +66,6 @@ namespace EstoqueProdutos.Models
         public int UsuarioId { get; set; }
 
         public UsuarioModel? Usuario { get; set; }
+
     }
 }

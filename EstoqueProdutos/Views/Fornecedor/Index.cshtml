@@ -3,9 +3,9 @@
 @using EstoqueProdutos.Enums
 @using EstoqueProdutos.Utils;
 
-@model List<ClienteModel>;
+@model List<FornecedorModel>;
 
-    @if (TempData["MensagemSucesso"] != null)
+@if (TempData["MensagemSucesso"] != null)
 {
     <div class="alert alert-success" role="alert">
         @TempData["MensagemSucesso"]
@@ -21,7 +21,7 @@ else if (TempData["MensagemErro"] != null)
 }
 
 <div class="mb-3">
-    <form asp-controller="Cliente" asp-action="Index" method="get" class="row">
+    <form asp-controller="Fornecedor" asp-action="Index" method="get" class="row">
         <div class="col-md-3">
             <label for="Nome" class="form-label">Nome</label>
             <input type="text" class="form-control" id="Nome" name="Nome" value="@ViewData["Nome"]" placeholder="Filtrar por Nome">
@@ -31,16 +31,8 @@ else if (TempData["MensagemErro"] != null)
             <input type="text" class="form-control" id="Telefone" name="Telefone" value="@ViewData["Telefone"]" placeholder="Filtrar por Telefone">
         </div>
         <div class="col-md-3">
-            <label for="CPF" class="form-label">CPF/CNPJ</label>
+            <label for="CNPJ" class="form-label">CPF/CNPJ</label>
             <input type="text" class="form-control" id="CPF" name="CPF" value="@ViewData["CPF"]" placeholder="Filtrar por CPF">
-        </div>
-        <div class="col-md-3">
-            <label for="BomPagador" class="form-label">Bom Pagador</label>
-            <select class="form-select form-control" id="BomPagador" name="BomPagador" value="@ViewData["BomPagador"]">
-                <option value="@null">Selecione</option>
-                <option value="@true"> Sim </option>
-                <option value="@false"> Não </option>
-            </select>
         </div>
         <div class="col-md-3">
             <label for="DataUltimaCompraInicio" class="form-label">Dt. Ult. Compra - Início</label>
@@ -52,18 +44,18 @@ else if (TempData["MensagemErro"] != null)
         </div>
         <div class="col-md-3 d-flex align-items-md-end end">
             <button type="submit" class="btn btn-primary me-lg-3 w-50"><i class="fa-solid fa-magnifying-glass"></i></button>
-            <a asp-controller="Cliente" asp-action="Index" class="btn btn-secondary w-100">Limpar</a>
+            <a asp-controller="Fornecedor" asp-action="Index" class="btn btn-secondary w-100">Limpar</a>
         </div>
     </form>
 
     <div class="justify-content-between align-items-center mb-2 mt-2">
-        <a asp-controller="Cliente" asp-action="Criar" class="btn btn-primary">Novo cliente</a>
+        <a asp-controller="Fornecedor" asp-action="Criar" class="btn btn-primary">Novo fornecedor</a>
     </div>
 </div>
 
 <div class="container p-2">
 
-    <table id="clientesTable" class="table text-center shadow table-hover">
+    <table id="fornecedorTable" class="table text-center shadow table-hover">
         <thead>
             <tr>
                 <th scope="col"></th>
@@ -77,7 +69,7 @@ else if (TempData["MensagemErro"] != null)
         <tbody>
             @if (Model != null)
             {
-                @foreach (var cliente in Model)
+                @foreach (var fornecedor in Model)
                 {
                     <tr>
                         <td class="align-content-center text-center">
@@ -86,25 +78,22 @@ else if (TempData["MensagemErro"] != null)
                                     <i class="bi bi-pencil-square"></i>
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a asp-controller="Cliente" asp-action="Editar" asp-route-id="@cliente.Id" class="dropdown-item">Editar</a></li>
-                                    <li><a asp-controller="Cliente" asp-action="Enderecos" asp-route-id="@cliente.Id" class="dropdown-item">Endereços</a></li>
-                                    <li><a role="button" asp-route-id="@cliente.Id" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal-@cliente.Id">Apagar</a></li>
+                                    <li><a asp-controller="Fornecedor" asp-action="Editar" asp-route-id="@fornecedor.Id" class="dropdown-item">Editar</a></li>
+                                    <li><a asp-controller="Fornecedor" asp-action="Enderecos" asp-route-id="@fornecedor.Id" class="dropdown-item">Endereços</a></li>
+                                    <li><a role="button" asp-route-id="@fornecedor.Id" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal-@fornecedor.Id">Apagar</a></li>
                                 </ul>
                             </div>
                         </td>
-                        <td class="align-content-center text-start">@cliente.Nome</td>
-                        <td class="align-content-center text-start">@FormataUtils.FormatTelefone(cliente.Telefone)</td>
-                        <td class="align-content-center text-start">@FormataUtils.FormataCPFouCNPJ(cliente.CPF)</td>
+                        <td class="align-content-center text-start">@fornecedor.Nome</td>
+                        <td class="align-content-center text-start">@FormataUtils.FormatTelefone(fornecedor.Telefone)</td>
+                        <td class="align-content-center text-start">@FormataUtils.FormataCPFouCNPJ(fornecedor.CPF)</td>
                         <td class="align-content-center text-center">
-                            <i class="@(cliente.BomPagador? "bi bi-hand-thumbs-up-fill text-success" : "bi bi-hand-thumbs-down-fill text-danger")"></i>
-                        </td>
-                        <td class="align-content-center text-center">
-                            @(cliente.DtUltCompra?.ToString("dd/MM/yyyy") ?? "Data não disponível")
+                            @(fornecedor.DtUltCompra?.ToString("dd/MM/yyyy") ?? "Data não disponível")
                         </td>
                     </tr>
 
                     //linha++;
-                    @Html.Partial("~/Views/Shared/Modal/ApagarClienteModal.cshtml", cliente)
+                    @Html.Partial("~/Views/Shared/Modal/ApagarFornecedorModal.cshtml", fornecedor)
                 }
             }
         </tbody>

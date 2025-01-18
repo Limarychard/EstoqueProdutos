@@ -1,0 +1,54 @@
+﻿@model CompraModel;
+
+<div class="container border">
+
+    <h1>Editar uma compra</h1>
+
+    <form method="post" asp-controller="Compra" asp-action="Editar" class="row g-3">
+        <div class="col-md-12">
+            <label asp-for="FornecedorId" for="inputFornecedor" class="form-label">Fornecedor</label>
+            <select asp-for="FornecedorId" class="form-select" aria-label="Default select example">
+                <option value="" selected>Selecione o fornecedor</option>
+                @foreach (var fornecedor in ViewBag.Fornecedores)
+                {
+                    <option value="@fornecedor.Value">@fornecedor.Text</option>
+                }
+            </select>
+            @Html.ValidationMessageFor(x => x.FornecedorId)
+        </div>
+
+        <div class="col-12">
+            <label asp-for="Valor" for="inputValor" class="form-label money">Valor Total</label>
+            <input asp-for="Valor" type="text" class="form-control" id="inputValor" value="@Model?.Valor" />
+            @Html.ValidationMessageFor(x => x.Valor)
+        </div>
+        <div class="col-12">
+            <label asp-for="FormaDePagamento" for="inputFornecedor" class="form-label">Forma de pagamento</label>
+            <select asp-for="FormaDePagamento" class="form-select" aria-label="Default select example">
+                @if (ViewBag.FormasDePagamento != null)
+                {
+                    @foreach (var opt in ViewBag.FormasDePagamento)
+                    {
+                        <option value="@opt.Value">@opt.Text</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="form-check">
+            <input asp-for="Parcelado" class="form-check-input" type="checkbox" id="Parcelado" name="Parcelado" onchange="toggleParcelas()">
+            <label asp-for="Parcelado" class="form-check-label" for="Parcelado">
+                Parcelado
+            </label>
+        </div>
+        <div id="parcelasDiv" class="form-check d-none">
+            <label asp-for="QuantidadeDeParcela" for="customRange2" class="form-label">Número de Parcelas: <span id="quantidadeParcelas">1</span></label>
+            <input asp-for="QuantidadeDeParcela" type="range" class="form-range" min="1" max="12" value="1" id="customRange2" oninput="atualizarParcelas()">
+        </div>
+        <div class="d-flex gap-2 mb-3">
+            <button type="submit" class="btn btn-primary w-25">Editar</button>
+            <a asp-controller="Compra" asp-action="Index" class="btn btn-secondary w-25">Voltar</a>
+        </div>
+
+    </form>
+
+</div>

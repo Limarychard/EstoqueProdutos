@@ -3,7 +3,7 @@
 @using EstoqueProdutos.Enums
 @using EstoqueProdutos.Utils
 
-@model List<VendaModel>;
+@model List<CompraModel>;
 
 @functions {
     private string FormaDePagamentoDisplay(FormaDePagamentoEnum formaDePagamento)
@@ -30,10 +30,10 @@ else if (TempData["MensagemErro"] != null)
 }
 
 <div class="mb-3">
-    <form asp-controller="Venda" asp-action="Index" method="get" class="row">
+    <form asp-controller="Compra" asp-action="Index" method="get" class="row">
         <div class="col-md-3 mb-1">
-            <label for="NomeCliente" class="form-label">Nome Cliente</label>
-            <input type="text" class="form-control" id="NomeCliente" name="NomeCliente" value="@ViewData["NomeCliente"]" placeholder="Filtrar por Nome do Cliente">
+            <label for="NomeCliente" class="form-label">Nome Fornecedor</label>
+            <input type="text" class="form-control" id="NomeFornecedor" name="NomeFornecedor" value="@ViewData["NomeFornecedor"]" placeholder="Filtrar por Nome do Fornecedor">
         </div>
         <div class="col-md-3 mb-1">
             <label for="Valor" class="form-label">Valor</label>
@@ -65,44 +65,45 @@ else if (TempData["MensagemErro"] != null)
             <input type="number" max="12" class="form-control" id="QtdParcela" name="QtdParcela" value="@ViewData["QtdParcela"]" placeholder="Filtrar por Qtd. Parcelas">
         </div>
         <div class="col-md-3">
-            <label for="DataVendaInicio" class="form-label">Dt. Venda - Início</label>
-            <input type="date" class="form-control" id="DataVendaInicio" name="DataVendaInicio" value="@ViewData["DataVendaInicio"]">
+            <label for="DataCompraInicio" class="form-label">Dt. Compra - Início</label>
+            <input type="date" class="form-control" id="DataCompraInicio" name="DataCompraInicio" value="@ViewData["DataCompraInicio"]">
         </div>
         <div class="col-md-3">
-            <label for="DataVendaFim" class="form-label">Dt. Venda - Fim</label>
-            <input type="date" class="form-control" id="DataVendaFim" name="DataVendaFim" value="@ViewData["DataVendaFim"]">
+            <label for="DataCompraFim" class="form-label">Dt. Compra - Fim</label>
+            <input type="date" class="form-control" id="DataCompraFim" name="DataCompraFim" value="@ViewData["DataCompraFim"]">
         </div>
         <div class="col-md-3 d-flex align-items-md-end end">
             <button type="submit" class="btn btn-primary me-lg-3 w-50"><i class="fa-solid fa-magnifying-glass"></i></button>
-            <a asp-controller="Venda" asp-action="Index" class="btn btn-secondary w-100">Limpar</a>
+            <a asp-controller="Compra" asp-action="Index" class="btn btn-secondary w-100">Limpar</a>
         </div>
     </form>
 
     <div class="justify-content-between align-items-center mb-3 mt-3">
-        <a asp-action="Criar" class="btn btn-primary">Nova venda</a>
+        <a asp-action="Criar" class="btn btn-primary">Nova compra</a>
     </div>
 </div>
 
 <div class="container p-2">
 
-    <table id="vendasTable" class="table text-center shadow table-hover">
+    <table id="comprasTable" class="table text-center shadow table-hover">
         <thead>
             <tr class="">
                 <th scope="col"></th>
-                <th scope="col" class="text-start">Cliente</th>
+                <th scope="col" class="text-start">Fornecedor</th>
+                <th scope="col" class="text-start">CPF/CNPJ</th>
                 <th scope="col">Produtos</th>
                 <th scope="col">Valor</th>
                 <th scope="col">Forma de Pagamento</th>
                 <th scope="col">Parcelado</th>
                 <th scope="col">Qtd. Parcelas</th>
-                <th class="align-content-center text-center" scope="col">Data da Venda</th>
+                <th class="align-content-center text-center" scope="col">Data da Compra</th>
             </tr>
         </thead>
         <tbody>
             @if(Model != null)
             {
                 //int linha = 1;
-                @foreach (var venda in Model)
+                @foreach (var compra in Model)
                 {
                     <tr>
                         <td class="align-content-center text-center">
@@ -111,8 +112,8 @@ else if (TempData["MensagemErro"] != null)
                                     <i class="bi bi-pencil-square"></i>
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a asp-controller="Venda" asp-action="Editar" asp-route-id="@venda.Id" class="dropdown-item">Editar</a></li>
-                                    <li><a role="button" asp-route-id="@venda.Id" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal-@venda.Id">Apagar</a></li>
+                                    <li><a asp-controller="Compra" asp-action="Editar" asp-route-id="@compra.Id" class="dropdown-item">Editar</a></li>
+                                    <li><a role="button" asp-route-id="@compra.Id" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal-@compra.Id">Apagar</a></li>
                                 </ul>
                             </div>
                         </td>
@@ -120,24 +121,25 @@ else if (TempData["MensagemErro"] != null)
                             
                              <input class="form-check-input" type="checkbox" value="false"> 
                         </td> -->
-                        <td class="align-content-center text-start">@venda.Cliente.Nome</td>
+                        <td class="align-content-center text-start">@compra.Fornecedor.Nome</td>
+                        <td class="align-content-center text-start">@FormataUtils.FormataCPFouCNPJ(compra.Fornecedor.CPF)</td>
                         <td class="align-content-center text-center">
-                            <a class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#modalProdutosVenda-@Html.Raw(venda.Id.ToString())">
+                            <a class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#modalProdutosCompra-@Html.Raw(compra.Id.ToString())">
                                 <i class="fa-solid fa-list"></i>
                             </a>
 
-                            <div class="modal fade" id="modalProdutosVenda-@venda.Id" tabindex="-1" aria-labelledby="modalProdutosVendaLabel-@venda.Id" aria-hidden="true">
+                            <div class="modal fade" id="modalProdutosCompra-@compra.Id" tabindex="-1" aria-labelledby="modalProdutosCompraLabel-@compra.Id" aria-hidden="true">
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="modalProdutosVendaLabel-@venda.Id">Produtos da Venda @venda.Id</h5>
+                                            <h5 class="modal-title" id="modalProdutosCompraLabel-@compra.Id">Produtos da Compra @compra.Id</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
                                             <div class="d-flex justify-content-start mb-5">
-                                                <a class="btn btn-primary" asp-controller="Venda" asp-route-vendaId="@venda.Id" asp-action="CriarProdutoVenda"> Adicionar produto</a>
+                                                <a class="btn btn-primary" asp-controller="Compra" asp-route-compraId="@compra.Id" asp-action="CriarProdutoCompra"> Adicionar produto</a>
                                             </div>
-                                            <table class="table table-bordered" id="ProdutosVendaTable">
+                                            <table class="table table-bordered" id="ProdutosCompraTable">
                                                 <thead>
                                                     <tr>
                                                         <th scope="col"></th>
@@ -147,7 +149,7 @@ else if (TempData["MensagemErro"] != null)
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach (var produto in venda.ProdutoVenda)
+                                                    @foreach (var produto in compra.ProdutoCompra)
                                                     {
                                                         <tr>
                                                             <td class="text-center">
@@ -157,11 +159,11 @@ else if (TempData["MensagemErro"] != null)
                                                                     </a>
                                                                     <ul class="dropdown-menu">
                                                                         <li>
-                                                                            <a asp-action="EditarProdutoVenda" asp-route-vendaId="@venda.Id" asp-route-Id="@produto.Id" class="dropdown-item">Editar</a>
+                                                                            <a asp-action="EditarProdutoCompra" asp-route-compraId="@compra.Id" asp-route-Id="@produto.Id" class="dropdown-item">Editar</a>
                                                                         </li>
                                                                         <li>
                                                                             <!-- Formulário dentro do link -->
-                                                                            <form method="post" asp-action="ApagarProduto" asp-route-vendaId="@venda.Id" asp-route-Id="@produto.Id" class="d-inline">
+                                                                            <form method="post" asp-action="ApagarProduto" asp-route-compraId="@compra.Id" asp-route-Id="@produto.Id" class="d-inline">
                                                                                 <!-- Link estilizado como botão -->
                                                                                 <button type="submit" class="dropdown-item" style="border: none; color: inherit; text-align: left; cursor: pointer;">
                                                                                     Apagar
@@ -186,17 +188,17 @@ else if (TempData["MensagemErro"] != null)
                                 </div>
                             </div>
                         </td>
-                        <td class="align-content-center">@FormataUtils.FormatValor(venda.Valor)</td>
-                        <td class="align-content-center text-center">@FormaDePagamentoDisplay(venda.FormaDePagamento)</td>
+                        <td class="align-content-center">@FormataUtils.FormatValor(compra.Valor)</td>
+                        <td class="align-content-center text-center">@FormaDePagamentoDisplay(compra.FormaDePagamento)</td>
                         <td class="align-content-center text-center">
-                            <i class="@(venda.Parcelado ? "bi bi-hand-thumbs-up-fill text-success" : "bi bi-hand-thumbs-down-fill text-danger")"></i>
+                            <i class="@(compra.Parcelado ? "bi bi-hand-thumbs-up-fill text-success" : "bi bi-hand-thumbs-down-fill text-danger")"></i>
                         </td>
-                        <td >@venda.QuantidadeDeParcela</td>
-                        <td class="align-content-center text-center">@venda.DtInc.ToString("dd/MM/yyyy")</td>
+                        <td >@compra.QuantidadeDeParcela</td>
+                        <td class="align-content-center text-center">@compra.DtInc.ToString("dd/MM/yyyy")</td>
                     </tr>
 
                     //linha++;
-                    @Html.Partial("~/Views/Shared/Modal/ApagarVendaModal.cshtml", venda)
+                    @Html.Partial("~/Views/Shared/Modal/ApagarCompraModal.cshtml", compra)
                 }
             }
         </tbody>

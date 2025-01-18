@@ -1,0 +1,31 @@
+﻿@model ProdutoCompraModel
+@{
+    ViewBag.Title = "Editar Produto";
+}
+
+<h2>Editar Produto</h2>
+
+<form method="post">
+    <div class="col-md-12">
+        <input type="hidden" name="CompraId" value="@Model.CompraId" />
+        <label asp-for="ProdutoId" for="inputCliente" class="form-label">Produto</label>
+        <select asp-for="ProdutoId" class="form-select" aria-label="Default select example">
+            <option value="" selected>Selecione o cliente</option>
+            @foreach (var fornecedor in ViewBag.Produtos)
+            {
+                <option value="@fornecedor.Value">@fornecedor.Text</option>
+            }
+        </select>
+        @Html.ValidationMessageFor(x => x.ProdutoId)
+    </div>
+    <div class="mb-3">
+        <label for="Quantidade" class="form-label">Quantidade</label>
+        <input type="number" class="form-control" id="Quantidade" name="Quantidade" value="@Model.Quantidade" required />
+    </div>
+    <div class="mb-3">
+        <label for="ValorProduto" class="form-label">Valor</label>
+        <input type="number" class="form-control money" id="ValorProduto" name="ValorProduto" value="@Model.ValorProduto" required />
+    </div>
+    <input type="hidden" name="CompraId" value="@ViewBag.CompraId" />
+    <button type="submit" class="btn btn-primary">Editar Produto</button>
+</form>

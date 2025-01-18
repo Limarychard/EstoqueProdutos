@@ -1,33 +1,33 @@
-﻿@model VendaModel;
+﻿@model CompraModel;
 
 <div class="container border">
 
-    <h1>Criar uma nova venda</h1>
+    <h1>Criar uma nova compra</h1>
 
-    <form method="post" asp-controller="Venda" asp-action="Criar" class="row g-3">
+    <form method="post" asp-controller="Compra" asp-action="Criar" class="row g-3">
         <div class="col-md-12">
-            <label asp-for="ClienteId" for="inputCliente" class="form-label">Cliente</label>
-                <select asp-for="ClienteId" class="form-select" aria-label="Default select example">
-                <option value="" selected>Selecione o cliente</option>
-                    @foreach (var cliente in ViewBag.Clientes)
+            <label asp-for="FornecedorId" for="inputFornecedor" class="form-label">Fornecedor</label>
+                <select asp-for="FornecedorId" class="form-select" aria-label="Default select example">
+                <option value="" selected>Selecione o fornecedor</option>
+                    @foreach (var fornecedor in ViewBag.Fornecedores)
                     {
-                        <option value="@cliente.Value">@cliente.Text</option>
+                        <option value="@fornecedor.Value">@fornecedor.Text</option>
                     }
                 </select>
-            @Html.ValidationMessageFor(x => x.ClienteId)
+            @Html.ValidationMessageFor(x => x.FornecedorId)
         </div>
 
         <div class="col-md-12">
-            <label asp-for="ProdutoVendaId">
+            <label asp-for="ProdutoCompraId">
                 Clique para selecionar um ou mais produtos:
             </label>
-            <select asp-for="ProdutoVendaId" id="idSelect2" class="form-select select2" multiple>
+            <select asp-for="ProdutoCompraId" id="idSelect2" class="form-select select2" multiple>
                 @foreach (var produto in ViewBag.Produtos)
                 {
                     <option value="@produto.Value">@produto.Text</option>
                 }
             </select>
-            @Html.ValidationMessageFor(x => x.ProdutoVendaId)
+            @Html.ValidationMessageFor(x => x.ProdutoCompraId)
         </div>
 
         <div id="quantidadeProdutosDiv" class="d-none"></div>
@@ -38,7 +38,7 @@
             @Html.ValidationMessageFor(x => x.Valor)
         </div>
         <div class="col-12">
-            <label asp-for="FormaDePagamento" for="inputCliente" class="form-label">Forma de pagamento</label>
+            <label asp-for="FormaDePagamento" for="inputFormaDePagamento" class="form-label">Forma de pagamento</label>
             <select asp-for="FormaDePagamento" class="form-select" aria-label="Default select example">
                 @if (ViewBag.FormasDePagamento != null)
                 {
@@ -62,7 +62,7 @@
 
         <div class="d-flex gap-5 mb-3">
             <button type="submit" class="btn btn-primary w-50">Criar</button>
-            <a asp-controller="Venda" asp-action="Index" class="btn btn-secondary w-50"> Voltar </a>
+            <a asp-controller="Compra" asp-action="Index" class="btn btn-secondary w-50"> Voltar </a>
         </div>
 
     </form>
@@ -102,7 +102,7 @@
                             value: 1,
                             min: 1,
                             class: 'form-control quantidadeProduto',
-                            'data-preco': produto.ValorDeVenda
+                            'data-preco': produto.ValorDeCusto
                         });
 
                         var label = $('<label>').text("Quantidade para " + produto.Nome);

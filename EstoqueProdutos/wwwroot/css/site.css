@@ -15,6 +15,8 @@
     --card-bg-dark: #2c2f33;
     --card-border-color-light: #e3e9f7;
     --card-border-color-dark: #424549;
+    --sidebar-color-light: #e0e0e0;
+    --sidebar-color-dark: #9f9f9f;
     /* Tema claro (padrão) */
     --bg-color: var(--bg-color-light);
     --text-color: var(--text-color-light);
@@ -22,6 +24,7 @@
     --btn-text-color: var(--btn-text-light);
     --card-bg-color: var(--card-bg-light);
     --card-border-color: var(--card-border-color-light);
+    --sidebar-color: var(--sidebar-color-light);
 }
 
 [data-theme="dark"], body.dark-theme {
@@ -31,6 +34,7 @@
     --btn-text-color: var(--btn-text-dark);
     --card-bg-color: var(--card-bg-dark);
     --card-border-color: var(--card-border-color-dark);
+    --sidebar-color: var(--sidebar-color-dark);
 }
 
 [data-theme='light'] {
@@ -40,6 +44,7 @@
     --btn-text-color: var(--btn-text-light);
     --card-bg-color: var(--card-bg-light);
     --card-border-color: var(--card-border-color-light);
+    --sidebar-color: var(--sidebar-color-light);
 }
 
 html {
@@ -130,9 +135,8 @@ body {
 
 .side-item:hover:not(.active),
 #logout_btn:hover {
-background-color: #e0e0e0;
-border-radius: 10px;
-color: #0a0a0a;
+    background-color: var(--sidebar-color);
+    border-radius: 10px;
 }
 
 .side-item.active:hover {
@@ -232,6 +236,7 @@ color: #0a0a0a;
 
 #open_btn {
     position: absolute;
+    margin-top: -150px;
     right: -10px;
     border-radius: 100%;
     width: 40px;
@@ -371,7 +376,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .form-select {
     background-color: var(--card-bg-color);
     color: var(--text-color);
+}
 
+.select2-container--default .select2-selection--multiple {
+    background-color: transparent !important;
 }
 
 .page-item {

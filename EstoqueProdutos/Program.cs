@@ -22,13 +22,15 @@ namespace EstoqueProdutos
 
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            builder.Services.AddScoped<IVendaRepositorio, VendaRepositorio>();
+            builder.Services.AddScoped<ICompraRepositorio, CompraRepositorio>();
             builder.Services.AddScoped<IClienteRepositorio, ClienteRepositorio>();
-            builder.Services.AddScoped<IProdutoRepositorio, ProdutoRepositorio>();
-            builder.Services.AddScoped<IUsuarioRepositorio, UsuarioRepositorio>();
             builder.Services.AddScoped<IConfiguracaoRepositorio, ConfiguracaoRepositorio>();
-            builder.Services.AddScoped<ISessao, Sessao>();
             builder.Services.AddScoped<IEmail, Email>();
+            builder.Services.AddScoped<IFornecedorRepositorio, FornecedorRepositorio>();
+            builder.Services.AddScoped<IProdutoRepositorio, ProdutoRepositorio>();
+            builder.Services.AddScoped<ISessao, Sessao>();
+            builder.Services.AddScoped<IUsuarioRepositorio, UsuarioRepositorio>();
+            builder.Services.AddScoped<IVendaRepositorio, VendaRepositorio>();
 
             builder.Services.AddSession(o =>
             {

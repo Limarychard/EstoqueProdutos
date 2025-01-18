@@ -30,6 +30,13 @@
                 </a>
             </li>
 
+            <li class="side-item @(ViewContext.RouteData.Values["controller"].ToString() == "Compra" ? "active" : "")">
+                <a asp-area="" asp-controller="Compra" asp-action="Index">
+                    <i class="fa-solid fa-file-invoice"></i>
+                    <span class="item-description">Compras</span>
+                </a>
+            </li>
+
             <li class="side-item @(ViewContext.RouteData.Values["controller"].ToString() == "Produto" ? "active" : "")">
                 <a asp-area="" asp-controller="Produto" asp-action="Index">
                     <i class="fa-solid fa-box"></i>
@@ -41,6 +48,13 @@
                 <a asp-area="" asp-controller="Cliente" asp-action="Index">
                     <i class="fa-solid fa-users"></i>
                     <span class="item-description">Clientes</span>
+                </a>
+            </li>
+
+            <li class="side-item @(ViewContext.RouteData.Values["controller"].ToString() == "Fornecedor" ? "active" : "")">
+                <a asp-area="" asp-controller="Fornecedor" asp-action="Index">
+                    <i class="fa-solid fa-user-tie"></i>
+                    <span class="item-description">Fornecedores</span>
                 </a>
             </li>
 
